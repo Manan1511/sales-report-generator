@@ -1329,7 +1329,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     const gstExp     = () => catExp('GST Expense');
     const totalExp   = () => directExp() + empCost() + gstExp() + finCost() + deprec();
     const pbt        = () => revenue() + otherInc() - totalExp();
-    const taxRate = 0.25;
+    const taxRate = 0.25168;
     const taxExp = () => Math.max(0, pbt()) * taxRate;
     const pat = () => pbt() - taxExp();
 
@@ -1854,25 +1854,30 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     }
 
     function renderPnl() {
-      const rev = revenue(), oi = otherInc(), gx = gstExp(), fc = finCost(), dep = deprec();
-      const de = directExp(), ie = empCost();  // hoisted — used in KPIs and rows
-      const eb = rev + oi - de - ie - gx;      // EBITDA
-      const p = pbt(), tx = taxExp(), np = pat();
+      const rev = revenue(), oi = otherInc(), fc = finCost(), dep = deprec();
+      // Re-define buckets to match reference structure:
+      //   Direct Expenses  = Direct Cost ledgers only
+      //   Indirect Expenses = Employee Cost + GST Expense + Other Expenses (combined)
+      const dirOnly     = catExp('Direct Cost');
+      const indirectAll = empCost() + gstExp() + catExp('Other Expenses');
+      const eb = rev + oi - dirOnly - indirectAll;   // EBITDA (same total as before)
+      const p = pbt(), np = pat();
+
       document.getElementById('pnlKpis').innerHTML = kpiHTML([
-        { l: 'Revenue', v: fmtCr(rev), n: periodLabel() },
-        { l: 'EBITDA', v: fmtCr(eb), n: pct(eb, rev) + ' margin' },
-        { l: 'Total Expenses', v: fmtCr(de + ie + gx + fc + dep), n: pct(de + ie + gx + fc + dep, rev) + ' of revenue' },
-        { l: 'Profit Before Tax', v: fmtCr(p), n: pct(p, rev) + ' margin', cls: p >= 0 ? 'pos' : 'neg' },
+        { l: 'Revenue',           v: fmtCr(rev),       n: periodLabel() },
+        { l: 'EBITDA',            v: fmtCr(eb),        n: pct(eb, rev) + ' margin' },
+        { l: 'Total Expenses',    v: fmtCr(dirOnly + indirectAll + fc + dep), n: pct(dirOnly + indirectAll + fc + dep, rev) + ' of revenue' },
+        { l: 'Profit Before Tax', v: fmtCr(p),         n: pct(p, rev) + ' margin', cls: p >= 0 ? 'pos' : 'neg' },
       ]);
       document.getElementById('pnlTrendCap').textContent = 'Monthly (₹)';
-      document.getElementById('pnlTblCap').textContent = 'Period: ' + periodLabel();
+      document.getElementById('pnlTblCap').textContent   = 'Period: ' + periodLabel();
       baseChart();
       destroyChart('pnlTrend');
       charts.pnlTrend = new Chart(document.getElementById('pnlTrend'), {
         type: 'bar',
         data: {
           labels: DATA.months, datasets: [
-            { label: 'Revenue', data: monthlySeries('revenue'), backgroundColor: '#3f7cbf', borderRadius: 5, maxBarThickness: 14 },
+            { label: 'Revenue',  data: monthlySeries('revenue'), backgroundColor: '#3f7cbf', borderRadius: 5, maxBarThickness: 14 },
             { label: 'Expenses', data: monthlySeries('expense'), backgroundColor: '#d65a3c', borderRadius: 5, maxBarThickness: 14 },
             { type: 'line', label: 'Profit', data: monthlySeries('profit'), borderColor: '#2f9488', backgroundColor: '#2f948833', borderWidth: 2, tension: .35, pointRadius: 0, fill: true }]
         },
@@ -1883,8 +1888,8 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
         }
       });
       destroyChart('pnlDonut');
-      const costs = [['Direct Expenses', de], ['Indirect Expenses', ie], ['GST Expense', gx], ['Finance Cost', fc], ['Depreciation', dep]].filter(c => c[1] > 0);
-      const te = de + ie + gx + fc + dep;
+      const costs = [['Direct Expenses', dirOnly], ['Indirect Expenses', indirectAll], ['Finance Cost', fc], ['Depreciation', dep]].filter(c => c[1] > 0);
+      const te = dirOnly + indirectAll + fc + dep;
       charts.pnlDonut = new Chart(document.getElementById('pnlDonut'), {
         type: 'doughnut',
         data: { labels: costs.map(c => c[0]), datasets: [{ data: costs.map(c => c[1]), backgroundColor: costs.map((c, i) => COLORS[i % COLORS.length]), borderColor: '#fff', borderWidth: 3 }] },
@@ -1895,38 +1900,54 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
           }
         }
       });
-      // subByName: sum flow for ledgers matching name (positive = expense already)
-      const byName = n => { const ms2 = activeMonths(); let t = 0; DATA.ledgers.forEach(l => { if (l.stmt === 'P&L' && l.name === n) ms2.forEach(m => t += (l.flow[m] || 0) * l.sign); }); return t; };
+
+      // ── P&L Statement Table ───────────────────────────────────────────────────
+      // Display convention (matches reference):
+      //   Amount column  : negative for expense outflows, positive for income / profit
+      //   % column       : raw expense value / rev (positive % for expenses, negative for credits)
+      const ms2 = activeMonths();
+
+      // Dynamically read sub-ledgers for a category filter, sorted by magnitude
+      const catSubItems = filterFn => {
+        const result = [];
+        DATA.ledgers.forEach(l => {
+          if (l.stmt === 'P&L' && filterFn(l)) {
+            const v = ms2.reduce((t, m) => t + (l.flow[m] || 0) * l.sign, 0);
+            if (v !== 0) result.push([l.name, v]);
+          }
+        });
+        return result.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+      };
+
+      const directSubs  = catSubItems(l => l.cat === 'Direct Cost');
+      const empSubs     = catSubItems(l => l.cat === 'Employee Cost');
+      const gstSubs     = catSubItems(l => l.cat === 'GST Expense');
+      const otherExpAmt = catExp('Other Expenses');
+
       const rows = [
-        ['grp', 'Revenue from Operations',  rev,                   pct(rev, rev)],
-        ['sub', 'Other Income',              oi,                    pct(oi, rev)],
-        ['grp', 'Total Income',              rev + oi,             pct(rev + oi, rev)],
-        ['grp2','Direct Expenses',           de,                    pct(de, rev)],
-        ['sub2','Hosting Charges',           byName('Hosting Charges'),           pct(byName('Hosting Charges'), rev)],
-        ['sub2','Site Expenses',             byName('Site Expenses'),             pct(byName('Site Expenses'), rev)],
-        ['sub2','Other Direct Expenses',     byName('Other Direct Expenses'),     pct(byName('Other Direct Expenses'), rev)],
-        ['sub2','Rent',                      byName('Rent'),                      pct(byName('Rent'), rev)],
-        ['sub2','Housekeeping & Laundry',    byName('Housekeeing & Laundry'),     pct(byName('Housekeeing & Laundry'), rev)],
-        ['sub2','Kitchen Purchases',         byName('Kitchen Purchases & Other Kitchen Related Expenses'), pct(byName('Kitchen Purchases & Other Kitchen Related Expenses'), rev)],
-        ['sub2','Commission & Brokerage',    byName('Commission & Brokerage'),    pct(byName('Commission & Brokerage'), rev)],
-        ['sub2','G&A Expenses',              byName('General & Administrative Expenses'), pct(byName('General & Administrative Expenses'), rev)],
-        ['sub2','Memberships',               byName('Membership & Subscriptions'),pct(byName('Membership & Subscriptions'), rev)],
-        ['sub2','Power & Fuel',              byName('Power & Fuel Expenses'),     pct(byName('Power & Fuel Expenses'), rev)],
-        ['sub2','Professional & Legal',      byName('Professional & Legal Fees'), pct(byName('Professional & Legal Fees'), rev)],
-        ['sub2','Repairs & Maintenance',     byName('Repairs & Maintenance'),     pct(byName('Repairs & Maintenance'), rev)],
-        ['sub2','Travel & Accommodation',    byName('Travelling & Accomodation Expenses'), pct(byName('Travelling & Accomodation Expenses'), rev)],
-        ['grp2','Employee Cost',             ie,                    pct(ie, rev)],
-        ["sub2","Director's Remuneration",  byName("Director's Remuneration"),   pct(byName("Director's Remuneration"), rev)],
-        ['sub2','Employee Benefit Expenses', byName('Employee Benefit Expenses'), pct(byName('Employee Benefit Expenses'), rev)],
-        ['grp2','GST Expense',               gx,                    pct(gx, rev)],
-        ['sub2','Rates & Taxes',             byName('Rates & Taxes'),             pct(byName('Rates & Taxes'), rev)],
-        ['grp', 'EBITDA',                    eb,                    pct(eb, rev)],
-        ['sub', 'Finance Cost',              fc,                    pct(fc, rev)],
-        ['sub', 'Depreciation & Amortisation', dep,                 pct(dep, rev)],
-        ['tot', 'Profit Before Tax',         p,                     pct(p, rev)],
-      ].filter(([cls,, amt]) => ['grp','grp2','tot'].includes(cls) || (typeof amt === 'number' && amt !== 0));
+        ['grp',  'Revenue from Operations',     rev,              pct(rev, rev)],
+        ['sub',  'Other Income',                oi,               pct(oi, rev)],
+        ['grp',  'Total Income',                rev + oi,         pct(rev + oi, rev)],
+        ['grp2', 'Direct Expenses',             -dirOnly,         pct(dirOnly, rev)],
+        ...directSubs.map(([n, v]) =>
+          ['sub2', n, -v, pct(v, rev)]),
+        ['grp2', 'Indirect Expenses',           -indirectAll,     pct(indirectAll, rev)],
+        ...empSubs.map(([n, v]) =>
+          ['sub2', n, -v, pct(v, rev)]),
+        ...gstSubs.map(([n, v]) =>
+          ['sub2', n, -v, pct(v, rev)]),
+        ...(otherExpAmt !== 0 ? [['sub2', 'Other Indirect Expenses', -otherExpAmt, pct(otherExpAmt, rev)]] : []),
+        ['grp',  'EBITDA',                      eb,               pct(eb, rev)],
+        ['sub',  'Finance Cost',                -fc,              pct(fc, rev)],
+        ['sub',  'Depreciation & Amortisation', -dep,             pct(dep, rev)],
+        ['tot',  'Profit Before Tax',           p,                pct(p, rev)],
+      ].filter(([cls,, amt]) =>
+        ['grp', 'grp2', 'tot'].includes(cls) ||
+        (typeof amt === 'number' && amt !== 0));
+
       document.querySelector('#pnlTbl tbody').innerHTML = rows.map(([cls, lbl, amt, pc]) =>
-        `<tr class="${cls}"><td>${lbl}</td><td class="${(amt !== undefined && amt !== '' && amt < 0) ? 'neg' : ''}">${amt === undefined || amt === '' ? '' : fmt(amt)}</td><td>${pc || ''}</td></tr>`).join('');
+        `<tr class="${cls}"><td>${lbl}</td><td class="${typeof amt === 'number' && amt < 0 ? 'neg' : ''}">${typeof amt === 'number' ? fmt(amt) : ''}</td><td>${pc || ''}</td></tr>`
+      ).join('');
     }
 
     function cumPnlProfitTo(lastMonth) {
