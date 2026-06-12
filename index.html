@@ -4,9 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="OSI Hospitality Financial Analysis Dashboard provides real-time tracking, analytical views of P&L, balance sheets, properties, and consolidated sales register.">
+  <meta name="description"
+    content="OSI Hospitality Financial Analysis Dashboard provides real-time tracking, analytical views of P&L, balance sheets, properties, and consolidated sales register.">
   <meta property="og:title" content="OSI Hospitality — Financial Analysis Dashboard">
-  <meta property="og:description" content="OSI Hospitality Financial Analysis Dashboard provides real-time tracking, analytical views of P&L, balance sheets, properties, and consolidated sales register.">
+  <meta property="og:description"
+    content="OSI Hospitality Financial Analysis Dashboard provides real-time tracking, analytical views of P&L, balance sheets, properties, and consolidated sales register.">
   <meta property="og:type" content="website">
   <title>OSI Hospitality — Financial Analysis Dashboard</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -696,18 +698,90 @@
       border-radius: 20px;
       font-size: 10px;
     }
-  /* ── Top Cost: inline bar cell & pills ── */
-  .barcell{position:relative;min-width:120px}
-  .barcell .track{position:relative;height:18px;background:rgba(42,74,107,.06);border-radius:5px;overflow:hidden}
-  .barcell .fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;opacity:.85}
-  .barcell .lab{position:absolute;left:7px;top:0;bottom:0;display:flex;align-items:center;font-size:11px;font-weight:600;color:var(--ink)}
-  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700}
-  .pill.crit{background:rgba(224,122,95,.14);color:#c15a3f} .pill.norm{background:rgba(58,169,154,.14);color:#2a8377} .pill.fixed{background:rgba(138,124,200,.14);color:#6a5ba6} .pill.var{background:rgba(91,155,213,.14);color:#3a73a8}
+
+    /* ── Top Cost: inline bar cell & pills ── */
+    .barcell {
+      position: relative;
+      min-width: 120px
+    }
+
+    .barcell .track {
+      position: relative;
+      height: 18px;
+      background: rgba(42, 74, 107, .06);
+      border-radius: 5px;
+      overflow: hidden
+    }
+
+    .barcell .fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 5px;
+      opacity: .85
+    }
+
+    .barcell .lab {
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink)
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 700
+    }
+
+    .pill.crit {
+      background: rgba(224, 122, 95, .14);
+      color: #c15a3f
+    }
+
+    .pill.norm {
+      background: rgba(58, 169, 154, .14);
+      color: #2a8377
+    }
+
+    .pill.fixed {
+      background: rgba(138, 124, 200, .14);
+      color: #6a5ba6
+    }
+
+    .pill.var {
+      background: rgba(91, 155, 213, .14);
+      color: #3a73a8
+    }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <!-- Password Protection Screen -->
+  <div id="password-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(1100px 560px at 82% -12%, #eaf0f8, #f4f7fb 50%, #eef2f7);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif">
+    <div style="background:#fff;padding:40px;border-radius:16px;box-shadow:0 10px 30px rgba(31,58,95,0.08);border:1px solid rgba(31,58,95,0.08);max-width:380px;width:100%;text-align:center">
+      <div style="font-size:26px;font-weight:800;color:#1f3a5f;margin-bottom:8px">OSI Hospitality</div>
+      <div style="font-size:11px;letter-spacing:3px;font-weight:600;color:#b8902f;margin-bottom:24px;text-transform:uppercase">Financial Dashboard</div>
+      
+      <div style="margin-bottom:20px;text-align:left">
+        <label for="pass-input" style="font-size:11.5px;font-weight:700;color:#1c2b40;display:block;margin-bottom:8px">Enter Password</label>
+        <input type="password" id="pass-input" placeholder="••••••••" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(31,58,95,0.15);font-size:14px;background:#f7f9fc;color:#1c2b40;box-sizing:border-box;outline:none;transition:border-color 0.2s">
+        <div id="pass-error" style="color:#c0492f;font-size:11px;font-weight:600;margin-top:6px;display:none">Incorrect password. Please try again.</div>
+      </div>
+      
+      <button id="pass-submit" style="width:100%;background:#1f3a5f;color:#fff;border:none;padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(31,58,95,0.15);transition:background 0.2s">Access Dashboard</button>
+    </div>
+  </div>
+
+  <div class="wrap" style="display:none">
     <header>
       <div class="brand">
         <h1>OSI Hospitality Private Limited</h1>
@@ -742,23 +816,53 @@
     </div>
 
     <!-- OVERVIEW -->
-  <section class="view active" id="view-overview">
-    <div class="kpis" id="ovKpis"></div>
-    <div class="grid2">
-      <div class="card"><h3>Income &amp; Profit Trend</h3><div class="cap" id="ovTrendCap"></div><div class="chart-box"><canvas id="ovTrend"></canvas></div></div>
-      <div class="card"><h3>Where the Money Goes</h3><div class="cap" id="ovWaterfallCap">Revenue → costs → profit</div><div class="donut-wrap"><canvas id="ovDonut"></canvas></div></div>
-    </div>
-    <div class="grid2b">
-      <div class="card"><h3>Financial Snapshot</h3><div class="cap" id="ovSnapCap"></div>
-        <table id="ovSnap"><thead><tr><th>Metric</th><th>Value</th><th>% / Ratio</th></tr></thead><tbody></tbody></table>
+    <section class="view active" id="view-overview">
+      <div class="kpis" id="ovKpis"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Income &amp; Profit Trend</h3>
+          <div class="cap" id="ovTrendCap"></div>
+          <div class="chart-box"><canvas id="ovTrend"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Where the Money Goes</h3>
+          <div class="cap" id="ovWaterfallCap">Revenue → costs → profit</div>
+          <div class="donut-wrap"><canvas id="ovDonut"></canvas></div>
+        </div>
       </div>
-      <div class="card"><h3>Health Indicators</h3><div class="cap">Quick read on the business</div>
-        <table id="ovHealth"><thead><tr><th>Indicator</th><th>Status</th><th>Value</th></tr></thead><tbody></tbody></table>
+      <div class="grid2b">
+        <div class="card">
+          <h3>Financial Snapshot</h3>
+          <div class="cap" id="ovSnapCap"></div>
+          <table id="ovSnap">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+                <th>% / Ratio</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Health Indicators</h3>
+          <div class="cap">Quick read on the business</div>
+          <table id="ovHealth">
+            <thead>
+              <tr>
+                <th>Indicator</th>
+                <th>Status</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SALES -->
+    <!-- SALES -->
     <section class="view" id="view-sales">
       <div class="kpis" id="salesKpis"></div>
       <div class="grid2">
@@ -877,7 +981,18 @@
         <div class="card">
           <h3>Cost Ledgers — Ranked</h3>
           <div class="cap" id="costTblCap"></div>
-          <table id="costTbl"><thead><tr><th>Ledger</th><th>Amount</th><th>Share of Cost</th><th>Cumulative</th></tr></thead><tbody></tbody><tfoot></tfoot></table>
+          <table id="costTbl">
+            <thead>
+              <tr>
+                <th>Ledger</th>
+                <th>Amount</th>
+                <th>Share of Cost</th>
+                <th>Cumulative</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
         </div>
         <div class="card">
           <h3>Cost Structure</h3>
@@ -888,107 +1003,199 @@
     </section>
 
     <!-- TAX -->
-  <section class="view" id="view-tax">
-    <div class="kpis" id="taxKpis"></div>
-    <div class="grid2">
-      <div class="card">
-        <h3>Income Tax Computation</h3><div class="cap" id="taxCompCap">Taxable profit after depreciation adjustment</div>
-        <table id="taxCompTbl"><tbody></tbody></table>
-        <div style="margin-top:14px;padding:13px 15px;background:linear-gradient(160deg,rgba(199,154,62,.08),rgba(199,154,62,.02));border:1px dashed var(--line);border-radius:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--navy)">Depreciation as per Income Tax Act</div>
-              <div style="font-size:10.5px;color:var(--muted)" id="depItStatus">Not uploaded — using ₹0 (tax = 25.168% of PBT)</div>
+    <section class="view" id="view-tax">
+      <div class="kpis" id="taxKpis"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Income Tax Computation</h3>
+          <div class="cap" id="taxCompCap">Taxable profit after depreciation adjustment</div>
+          <table id="taxCompTbl">
+            <tbody></tbody>
+          </table>
+          <div
+            style="margin-top:14px;padding:13px 15px;background:linear-gradient(160deg,rgba(199,154,62,.08),rgba(199,154,62,.02));border:1px dashed var(--line);border-radius:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--navy)">Depreciation as per Income Tax Act</div>
+                <div style="font-size:10.5px;color:var(--muted)" id="depItStatus">Not uploaded — using ₹0 (tax = 25.168%
+                  of PBT)</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <button id="depUpload"
+                  style="padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;cursor:pointer">📄
+                  Upload IT Depreciation</button>
+                <button id="depDelete"
+                  style="display:none;padding:7px 12px;border-radius:10px;border:1.5px solid #e53e3e;background:transparent;color:#e53e3e;font-size:11px;font-weight:600;cursor:pointer"
+                  title="Remove saved depreciation value">🗑️ Remove</button>
+              </div>
+              <input type="file" id="depFile" accept=".xlsx,.xls" style="display:none">
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <button id="depUpload" style="padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;cursor:pointer">📄 Upload IT Depreciation</button>
-              <button id="depDelete" style="display:none;padding:7px 12px;border-radius:10px;border:1.5px solid #e53e3e;background:transparent;color:#e53e3e;font-size:11px;font-weight:600;cursor:pointer" title="Remove saved depreciation value">🗑️ Remove</button>
-            </div>
-            <input type="file" id="depFile" accept=".xlsx,.xls" style="display:none">
           </div>
         </div>
-      </div>
-      <div class="card"><h3>Tax Split</h3><div class="cap">P&amp;L tax vs income tax (not in P&amp;L)</div><div class="donut-wrap"><canvas id="taxDonut"></canvas></div></div>
-    </div>
-    <div class="card"><h3>Cost &amp; Tax Heads</h3><div class="cap" id="taxTblCap"></div>
-      <table id="taxTbl"><thead><tr><th>Head</th><th>Amount</th><th>% of Revenue</th></tr></thead><tbody></tbody></table>
-    </div>
-  </section>
-
-    <!-- RATIOS -->
-  <section class="view" id="view-ratios">
-    <div class="kpis" id="ratKpis"></div>
-    <div class="grid2b">
-      <div class="card"><h3>Profitability Margins</h3><div class="cap" id="ratMarginCap"></div><div class="chart-sm"><canvas id="ratMargin"></canvas></div></div>
-      <div class="card"><h3>Liquidity &amp; Leverage Trend</h3><div class="cap">Across the year</div><div class="chart-sm"><canvas id="ratLiq"></canvas></div></div>
-    </div>
-    <div class="grid2b">
-      <div class="card"><h3>Profitability &amp; Returns</h3><div class="cap" id="ratProfCap"></div>
-        <table id="ratProfTbl"><thead><tr><th>Ratio</th><th>Value</th><th>What it means</th></tr></thead><tbody></tbody></table>
-      </div>
-      <div class="card"><h3>Liquidity, Leverage &amp; Efficiency</h3><div class="cap" id="ratLiqCap"></div>
-        <table id="ratLiqTbl"><thead><tr><th>Ratio</th><th>Value</th><th>What it means</th></tr></thead><tbody></tbody></table>
-      </div>
-    </div>
-  </section>
-
-  <!-- TRENDS -->
-  <section class="view" id="view-trends">
-    <div class="kpis" id="trKpis"></div>
-    <div class="grid2">
-      <div class="card"><h3>Revenue &amp; Profit — Monthly</h3><div class="cap">Full year trajectory</div><div class="chart-box"><canvas id="trMain"></canvas></div></div>
-      <div class="card"><h3>Profit Bridge</h3><div class="cap">Revenue to net profit, this period</div><div class="chart-box"><canvas id="trBridge"></canvas></div></div>
-    </div>
-    <div class="card"><h3>Month-on-Month Movement</h3><div class="cap" id="trTblCap"></div>
-      <table id="trTbl"><thead><tr><th>Month</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin %</th><th>Rev Growth</th></tr></thead><tbody></tbody></table>
-    </div>
-  </section>
-
-  <!-- PROPERTIES -->
-  <section class="view" id="view-properties">
-    <div class="kpis" id="propKpis"></div>
-
-    <!-- Contract Tracker upload / DB status banner -->
-    <div id="propBanner" style="display:none;margin-bottom:12px;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:600;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap"></div>
-
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
-        <div><h3 style="margin:0">Property Database</h3><div class="cap" id="propTblCap" style="margin:2px 0 0"></div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input id="propSearch" placeholder="🔍 Search tenant, property, pincode…" style="padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12px;min-width:230px;color:var(--ink)">
-          <select id="propArea2" style="padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink)"></select>
-          <!-- Upload Contract Tracker -->
-          <input type="file" id="propTrackerFile" accept=".xlsx,.xls" style="display:none">
-          <button id="propUpload" title="Upload Contract Tracker V2.xlsx to refresh property data" style="padding:8px 14px;border-radius:10px;border:1px solid var(--teal);background:rgba(47,148,136,.10);color:var(--teal);font-size:12px;font-weight:600;cursor:pointer">📂 Upload Tracker</button>
-          <!-- Save to DB (shown only after a fresh upload) -->
-          <button id="propSaveDb" style="display:none;padding:8px 14px;border-radius:10px;border:none;background:#2f9488;color:#fff;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(47,148,136,.28)">☁️ Save to DB</button>
-          <button id="propExport" style="padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 3px 10px rgba(42,74,107,.18)">⬇ CSV</button>
+        <div class="card">
+          <h3>Tax Split</h3>
+          <div class="cap">P&amp;L tax vs income tax (not in P&amp;L)</div>
+          <div class="donut-wrap"><canvas id="taxDonut"></canvas></div>
         </div>
       </div>
-      <div style="overflow-x:auto;max-height:640px;overflow-y:auto;border-radius:12px">
-        <table id="propTbl" style="font-size:11.5px">
-          <thead style="position:sticky;top:0;background:#fff;z-index:2"><tr>
-            <th data-sort="idx" style="cursor:pointer">#</th>
-            <th data-sort="building" style="cursor:pointer;text-align:left">Property ▾</th>
-            <th data-sort="pin" style="cursor:pointer">Pincode ▾</th>
-            <th data-sort="tenant" style="cursor:pointer;text-align:left">Tenant ▾</th>
-            <th data-sort="from" style="cursor:pointer">From ▾</th>
-            <th data-sort="to" style="cursor:pointer">To ▾</th>
-            <th data-sort="deposit" style="cursor:pointer">Deposit ▾</th>
-            <th data-sort="rent">Yr 1</th>
-            <th>Yr 2</th>
-            <th>Yr 3</th>
-            <th>Yr 4</th>
-            <th>Yr 5</th>
-            <th data-sort="esc" style="cursor:pointer">Increase ▾</th>
-          </tr></thead>
+      <div class="card">
+        <h3>Cost &amp; Tax Heads</h3>
+        <div class="cap" id="taxTblCap"></div>
+        <table id="taxTbl">
+          <thead>
+            <tr>
+              <th>Head</th>
+              <th>Amount</th>
+              <th>% of Revenue</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SALES REGISTER -->
+    <!-- RATIOS -->
+    <section class="view" id="view-ratios">
+      <div class="kpis" id="ratKpis"></div>
+      <div class="grid2b">
+        <div class="card">
+          <h3>Profitability Margins</h3>
+          <div class="cap" id="ratMarginCap"></div>
+          <div class="chart-sm"><canvas id="ratMargin"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Liquidity &amp; Leverage Trend</h3>
+          <div class="cap">Across the year</div>
+          <div class="chart-sm"><canvas id="ratLiq"></canvas></div>
+        </div>
+      </div>
+      <div class="grid2b">
+        <div class="card">
+          <h3>Profitability &amp; Returns</h3>
+          <div class="cap" id="ratProfCap"></div>
+          <table id="ratProfTbl">
+            <thead>
+              <tr>
+                <th>Ratio</th>
+                <th>Value</th>
+                <th>What it means</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Liquidity, Leverage &amp; Efficiency</h3>
+          <div class="cap" id="ratLiqCap"></div>
+          <table id="ratLiqTbl">
+            <thead>
+              <tr>
+                <th>Ratio</th>
+                <th>Value</th>
+                <th>What it means</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRENDS -->
+    <section class="view" id="view-trends">
+      <div class="kpis" id="trKpis"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Revenue &amp; Profit — Monthly</h3>
+          <div class="cap">Full year trajectory</div>
+          <div class="chart-box"><canvas id="trMain"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Profit Bridge</h3>
+          <div class="cap">Revenue to net profit, this period</div>
+          <div class="chart-box"><canvas id="trBridge"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Month-on-Month Movement</h3>
+        <div class="cap" id="trTblCap"></div>
+        <table id="trTbl">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Revenue</th>
+              <th>Expenses</th>
+              <th>Net Profit</th>
+              <th>Margin %</th>
+              <th>Rev Growth</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PROPERTIES -->
+    <section class="view" id="view-properties">
+      <div class="kpis" id="propKpis"></div>
+
+      <!-- Contract Tracker upload / DB status banner -->
+      <div id="propBanner"
+        style="display:none;margin-bottom:12px;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:600;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap">
+      </div>
+
+      <div class="card">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+          <div>
+            <h3 style="margin:0">Property Database</h3>
+            <div class="cap" id="propTblCap" style="margin:2px 0 0"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input id="propSearch" placeholder="🔍 Search tenant, property, pincode…"
+              style="padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12px;min-width:230px;color:var(--ink)">
+            <select id="propArea2"
+              style="padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink)"></select>
+            <!-- Upload Contract Tracker -->
+            <input type="file" id="propTrackerFile" accept=".xlsx,.xls" style="display:none">
+            <button id="propUpload" title="Upload Contract Tracker V2.xlsx to refresh property data"
+              style="padding:8px 14px;border-radius:10px;border:1px solid var(--teal);background:rgba(47,148,136,.10);color:var(--teal);font-size:12px;font-weight:600;cursor:pointer">📂
+              Upload Tracker</button>
+            <!-- Save to DB (shown only after a fresh upload) -->
+            <button id="propSaveDb"
+              style="display:none;padding:8px 14px;border-radius:10px;border:none;background:#2f9488;color:#fff;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(47,148,136,.28)">☁️
+              Save to DB</button>
+            <button id="propExport"
+              style="padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 3px 10px rgba(42,74,107,.18)">⬇
+              CSV</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;max-height:640px;overflow-y:auto;border-radius:12px">
+          <table id="propTbl" style="font-size:11.5px">
+            <thead style="position:sticky;top:0;background:#fff;z-index:2">
+              <tr>
+                <th data-sort="idx" style="cursor:pointer">#</th>
+                <th data-sort="building" style="cursor:pointer;text-align:left">Property ▾</th>
+                <th data-sort="pin" style="cursor:pointer">Pincode ▾</th>
+                <th data-sort="tenant" style="cursor:pointer;text-align:left">Tenant ▾</th>
+                <th data-sort="from" style="cursor:pointer">From ▾</th>
+                <th data-sort="to" style="cursor:pointer">To ▾</th>
+                <th data-sort="deposit" style="cursor:pointer">Deposit ▾</th>
+                <th data-sort="rent">Yr 1</th>
+                <th>Yr 2</th>
+                <th>Yr 3</th>
+                <th>Yr 4</th>
+                <th>Yr 5</th>
+                <th data-sort="esc" style="cursor:pointer">Increase ▾</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SALES REGISTER -->
     <section class="view" id="view-sales-register">
 
       <!-- Upload & Generate Card -->
@@ -1060,7 +1267,7 @@
             <!-- MakeMyTrip -->
             <div class="sr-field">
               <label for="sr-mmt">MakeMyTrip / Goibibo Export</label>
-              <input type="file" accept=".csv" id="sr-mmt">
+              <input type="file" accept=".csv, .xls. .xlsx" id="sr-mmt">
               <label for="sr-mmt" class="sr-upload-zone" id="zone-mmt">
                 <span class="uz-icon">🗂️</span>
                 <span class="uz-text">
@@ -1117,17 +1324,24 @@
           Export a Trial Balance from Tally for the period you want, then click <b>Load TB file</b> in the top bar.
           The dashboard reads the date range and files it automatically:
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px">
-            <div style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(63,124,191,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div
+              style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(63,124,191,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
               <div style="font-weight:700;color:var(--navy);font-size:12px">📅 Monthly</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:3px">A 1-month TB (e.g. 1-Apr-26 to 30-Apr-26). Upload all 12 — Apr-26 through Mar-27 — for the full year, viewable month-by-month or year-to-date.</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">A 1-month TB (e.g. 1-Apr-26 to 30-Apr-26).
+                Upload all 12 — Apr-26 through Mar-27 — for the full year, viewable month-by-month or year-to-date.
+              </div>
             </div>
-            <div style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(47,148,136,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div
+              style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(47,148,136,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
               <div style="font-weight:700;color:var(--navy);font-size:12px">📊 Quarterly</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:3px">A 3-month TB (e.g. 1-Apr-26 to 30-Jun-26). Switch the view to <b>Quarterly</b> and upload Q1–Q4 TBs for quarterly analysis.</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">A 3-month TB (e.g. 1-Apr-26 to 30-Jun-26).
+                Switch the view to <b>Quarterly</b> and upload Q1–Q4 TBs for quarterly analysis.</div>
             </div>
-            <div style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(184,144,47,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+            <div
+              style="flex:1;min-width:200px;background:linear-gradient(160deg,rgba(184,144,47,.08),transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px">
               <div style="font-weight:700;color:var(--navy);font-size:12px">🗓️ Yearly</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:3px">A full-year TB (e.g. 1-Apr-26 to 31-Mar-27). Switch to <b>Yearly</b> and upload the annual TB for year-end analysis.</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">A full-year TB (e.g. 1-Apr-26 to 31-Mar-27).
+                Switch to <b>Yearly</b> and upload the annual TB for year-end analysis.</div>
             </div>
           </div>
         </div>
@@ -1157,14 +1371,16 @@
         <h3>☁️ Cloud Database — All Uploads</h3>
         <div class="cap" id="mgTblCap">All records saved to Supabase</div>
         <table id="mgTbl" style="margin-top:8px">
-          <thead><tr>
-            <th style="text-align:left">Period</th>
-            <th style="text-align:left">Type</th>
-            <th style="text-align:left">Key</th>
-            <th>Uploaded At</th>
-            <th>Ledgers</th>
-            <th>Actions</th>
-          </tr></thead>
+          <thead>
+            <tr>
+              <th style="text-align:left">Period</th>
+              <th style="text-align:left">Type</th>
+              <th style="text-align:left">Key</th>
+              <th>Uploaded At</th>
+              <th>Ledgers</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
         <div id="mgEmpty" style="display:none;text-align:center;padding:32px;color:var(--muted);font-size:12.5px">
@@ -1217,9 +1433,9 @@
     // EXISTING DASHBOARD DATA & LOGIC (untouched)
     // ─────────────────────────────────────────────────────────────
     // Empty data template — all zeros. Real data populated by TB upload or cloud sync.
-    const DUMMY = { months: ["Apr-26","May-26","Jun-26","Jul-26","Aug-26","Sep-26","Oct-26","Nov-26","Dec-26","Jan-27","Feb-27","Mar-27"], ledgers: [] };
-    
-    const PROPERTIES=[{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 908","location":"Flat 908, Floor 9, Bellagio Residency, Sane guruji marg, 400011","pin":"400011","from":"20/02/2026","to":"19/02/2029","deposit":246000,"rents":[82000,86100,90405],"file":"908 Bellagio Rent Agreement.pdf"},{"tenant":"Osi Hospitality Private Limited","building":"SAI KANWAL COMPLEX","location":"SAI KANWAL COMPLEX, 400053","pin":"400053","from":"20/02/2026","to":"19/02/2029","deposit":390000,"rents":[130000,136500,143325],"file":"101 and 102 Sai Kanwal.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"SHAPOORJI PALLONJI BKC 28","location":"SHAPOORJI PALLONJI BKC 28, 400051","pin":"400051","from":"15/02/2026","to":"14/02/2029","deposit":285000,"rents":[95000,99750,104738],"file":"B 604 Shapoorji Pallonji.pdf"},{"tenant":"OSI Hospitality Private Limited","building":"Shapoorji Pallonji BKC 28","location":"Shapoorji Pallonji BKC 28, 400051","pin":"400051","from":"20/01/2026","to":"19/01/2028","deposit":214000,"rents":[107000,112350],"file":"A 1703 Shapoorji Pallonji.pdf"},{"tenant":"OSI Hospitality Private Limited","building":"Shapoorji Pallonji BKC 28","location":"Shapoorji Pallonji BKC 28, 400051","pin":"400051","from":"01/10/2026","to":"01/09/2029","deposit":345000,"rents":[115000,120750,126788],"file":"A 2204 Shapoorji Pallonji.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat B-402","location":"Flat B-402, Floor 4, Omkar View BKC, 400070","pin":"400070","from":"01/01/2026","to":"31/12/2028","deposit":189000,"rents":[33000,34650,36383],"file":"402 Omkar Vive.pdf"},{"tenant":"OSI Hospitality Private Limited","building":"Flat A1703","location":"Flat A1703, Floor 17, Shapoorji Pallonji BKC 28, 400051","pin":"400051","from":"20/01/2026","to":"19/01/2028","deposit":214000,"rents":[107000,112350],"file":"1703 Shapoorji Pallonji Agreement.pdf"},{"tenant":"OSI HOSPITALITY PVT LTD","building":"Flat 1401","location":"Flat 1401, Floor 14, Pali Carter, 400052","pin":"400052","from":"02/12/2026","to":"02/11/2028","deposit":400000,"rents":[155000,162750],"file":"1401 Pali Carters.pdf"},{"tenant":"OSI HOSPITALITY PVT LTD","building":"Flat 1101","location":"Flat 1101, Floor 11, Khar Shakti Bldg Khar Pali Carters, 400052","pin":"400052","from":"15/01/2026","to":"14/01/2029","deposit":450000,"rents":[60000],"file":"1101 Pali Carters Renewal Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat C-301","location":"Flat C-301, Floor 3, Omkar View BKC, 400070","pin":"400070","from":"15/10/2025","to":"14/11/2028","deposit":180000,"rents":[62000,65100,68355],"file":"301 Omkar Vive.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 702","location":"Flat 702, Floor 7, QUEEN SQUARE APARTMENT, 400054","pin":"400054","from":"24/12/2025","to":"23/12/2028","deposit":400000,"rents":[45000,47250,49613],"file":"702 Queen Square.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 701","location":"Flat 701, Floor 7, QUEEN SQUARE APARTMENTS, 400054","pin":"400054","from":"24/12/2025","to":"23/12/2028","deposit":220000,"rents":[25000,26250,27563],"file":"701 Queen Square.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 704","location":"Flat 704, Floor 7, QUEEN SQUARE APARTMENTS, 400054","pin":"400054","from":"24/12/2025","to":"23/12/2028","deposit":300000,"rents":[45000,47250,49613],"file":"704 Queen Square.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 703","location":"Flat 703, Floor 7, QUEEN SQUARE APARTMENTS, 400054","pin":"400054","from":"24/12/2025","to":"23/12/2028","deposit":450000,"rents":[45000,47250,49613],"file":"703 Queen Square.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 401","location":"Flat 401, Floor 4, WHITE ROSE, 400050","pin":"400050","from":"15/01/2026","to":"14/01/2029","deposit":250000,"rents":[40000,42000,44100],"file":"401 White Rose Agreement.pdf"},{"tenant":"OSI HOSPITALITY PVT LTD","building":"Flat 402","location":"Flat 402, Floor 4, Ashirwad CHSL, 400069","pin":"400069","from":"28/11/2025","to":"27/11/2028","deposit":300000,"rents":[69458,72931,76578],"file":"402 Ashirwad New Agreement.pdf"},{"tenant":"Osi Hospitality Pvt Ltd(Private Limited Company)","building":"Flat A-817","location":"Flat A-817, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014","pin":"411014","from":"11/01/2025","to":"31/10/2028","deposit":115500,"rents":[38500,40425,42446],"file":"A 817 Neon Hometel.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 201","location":"Flat 201, Floor 2, WHITE ROSE BUILDING, 400050","pin":"400050","from":"12/05/2025","to":"12/04/2028","deposit":228000,"rents":[66000,69300,72765],"file":"201 White Rose Agreement New Renewal.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 103","location":"Flat 103, Floor First, Neon Hometel, Phule Nagar Near RTO Office, Viman Nagar Pune, 411014","pin":"411014","from":"11/01/2025","to":"31/10/2028","deposit":120000,"rents":[40000,42000,44100],"file":"B 103 Neon Hometel.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat C-301","location":"Flat C-301, Floor 3, Omkar View BKC, 400070","pin":"400070","from":"15/10/2025","to":"14/11/2028","deposit":180000,"rents":[62000,65100,68355],"file":"301 Omkar Vive Rent Agreement.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 102","location":"Flat 102, Floor 1, BENSTON APPT, 400050","pin":"400050","from":"16/11/2025","to":"15/11/2028","deposit":200000,"rents":[45000,47250,49613],"file":"Benston Changed New Agreement.pdf"},{"tenant":"OSI Hospitality Private Limited","building":"Flat 902","location":"Flat 902, Floor 9, Khar Shakti A Wing, 400052","pin":"400052","from":"21/10/2025","to":"20/10/2028","deposit":300000,"rents":[67000,70350,73867],"file":"902 Pali Carters.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 103","location":"Flat 103, Floor First, Neon Hometel, Phule Nagar Near RTO Office, Viman Nagar Pune, 411014","pin":"411014","from":"11/01/2025","to":"31/10/2028","deposit":120000,"rents":[40000,42000,44100],"file":"B 103 neon hometel new agreement.pdf"},{"tenant":"Osi Hospitality Pvt Ltd(Private Limited Company)","building":"Flat A-817","location":"Flat A-817, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014","pin":"411014","from":"11/01/2025","to":"31/10/2028","deposit":115500,"rents":[38500,40425,42446],"file":"A 817 Neon Agreement.pdf"},{"tenant":"- Osi Hospitality pvt.ltd.(Private Limited Company)","building":"Flat B-201","location":"Flat B-201, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014","pin":"411014","from":"26/10/2025","to":"25/10/2028","deposit":60000,"rents":[30000,31500,33075],"file":"B 201 Neon Rent Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 202","location":"Flat 202, Floor 2nd, Angel View, Chapel Road, Bandra West, 400050","pin":"400050","from":"01/10/2023","to":"01/09/2026","deposit":200000,"rents":[55000,57750,60637,200000],"file":"202 Angel View Agreement.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 315","location":"Flat 315, Floor 3rd, Neon Hometel, JPN Road, Viman Nagar Pune, 411014","pin":"411014","from":"25/09/2025","to":"24/09/2028","deposit":60000,"rents":[28000,29680,31461],"file":"B 315 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 912","location":"Flat 912, Floor Ninth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/07/2025","to":"14/07/2028","deposit":55000,"rents":[27500,29562,31780],"file":"B 912 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Floor Second","location":"Floor Second, Plot No 52, Lane No 6, Mahada Colony, 411014","pin":"411014","from":"08/11/2025","to":"07/10/2026","deposit":32000,"rents":[16000],"file":"Pune Staff Room Agreement.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 508","location":"Flat 508, Floor Fifth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"09/01/2025","to":"31/08/2028","deposit":58000,"rents":[29000,30740,32585],"file":"A 508 Neon Hometel.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 401","location":"Flat 401, Floor 4, Angel View, 400050","pin":"400050","from":"10/05/2025","to":"01/04/2027","deposit":1900000,"rents":[1,30000],"file":"401 Angel View Rent Agreement.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Floor 17","location":"Floor 17, RANGE HEIGHTS, 400102","pin":"400102","from":"10/10/2025","to":"10/09/2027","deposit":200000,"rents":[49000,51450],"file":"1701 Range Heights New Agreement.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 701","location":"Flat 701, Floor 7, Ashirwad CHS LTD, 400093","pin":"400093","from":"16/09/2025","to":"15/09/2028","deposit":150000,"rents":[60000,63000,66150],"file":"701 Ashirwad Renewal Rent.pdf"},{"tenant":"OSI HOSPITALITY PRIVATE LIMITED","building":"Flat 301","location":"Flat 301, Floor 3, KRISHNA VILLA, 400054","pin":"400054","from":"09/01/2025","to":"31/08/2028","deposit":200000,"rents":[48000],"file":"Krishna Villa Staff Room Agreement.pdf"},{"tenant":"- OSI Hospitality Pvt Ltd (Private Limited Company)","building":"Flat 205","location":"Flat 205, Floor Second, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"09/01/2025","to":"31/05/2028","deposit":150000,"rents":[42000,44940,48085],"file":"B 205 Neon Hometel.pdf"},{"tenant":"Osi hospitality Private Limited (Private Limited Company)","building":"Flat A-203","location":"Flat A-203, Floor 2, Neon Hometels, Lohgaon","pin":"","from":"10/10/2025","to":"10/09/2028","deposit":126000,"rents":[42000,44100,46305],"file":"A 203 Neon Hometel.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 217","location":"Flat 217, Floor Second, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/09/2025","to":"14/09/2028","deposit":60000,"rents":[30000,32100,34347],"file":"A 217 Neon Hometel.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 409","location":"Flat 409, Floor Fourth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/09/2025","to":"14/09/2028","deposit":30000,"rents":[10000,10700,11449],"file":"B 409 Neon Hometel.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 808","location":"Flat 808, Floor Eighth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/09/2025","to":"14/09/2028","deposit":30000,"rents":[10000,10700,11449],"file":"B 808 Neon Hometel.pdf"},{"tenant":"Osi Hospitality Pvt. Ltd(Private Limited Company)","building":"Flat A-609","location":"Flat A-609, Floor 6th, Neon Hometel, Near Airport, Viman Nagar, 411014","pin":"411014","from":"09/01/2025","to":"31/08/2028","deposit":120000,"rents":[30000,31800,33708],"file":"A 609 Neon Hometel Rent Agreement.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 101","location":"Flat 101, Floor First, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/07/2025","to":"14/07/2028","deposit":56000,"rents":[28000,29400,30870],"file":"A 101 Neon Hometel.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 202","location":"Flat 202, Floor Second, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/07/2025","to":"14/07/2028","deposit":56000,"rents":[28000,29400,30870],"file":"A 202 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 405","location":"Flat 405, Floor Fourth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/08/2025","to":"14/08/2028","deposit":56000,"rents":[28000,29960,32057],"file":"A 405 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 114","location":"Flat 114, Floor First, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/08/2025","to":"14/08/2028","deposit":55000,"rents":[27500,29425,31485],"file":"B 114 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 517","location":"Flat 517, Floor Fifth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/08/2025","to":"14/08/2028","deposit":56000,"rents":[28000,29400,30870],"file":"A 517 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt Ltd (Private Limited Company)","building":"Flat 910","location":"Flat 910, Floor Ninth, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/08/2025","to":"14/08/2028","deposit":52000,"rents":[26000,27820,29770],"file":"A 910 Neon Pune.pdf"},{"tenant":"- OSI Hospitality Pvt. Ltd. (Private Limited Company)","building":"Flat 102","location":"Flat 102, Floor First, Neon Hometel, Viman Nagar Pune, 411014","pin":"411014","from":"15/08/2025","to":"14/08/2028","deposit":56000,"rents":[28000,29960,32057],"file":"A 102 Neon Pune.pdf"},{"tenant":"Osi hospitality Private Limited (Private Limited Company)","building":"Flat A-203","location":"Flat A-203, Floor 2, Neon Hometels, Lohgaon","pin":"","from":"10/10/2025","to":"10/09/2028","deposit":126000,"rents":[42000,44100,46305],"file":"Neon Hometel 203 Omkar J.pdf"},{"tenant":"- OSI HOSPITALIY PRIVATE LIMITED (Private Limited Company)","building":"Flat Room","location":"Flat Room, Versova Andheri Shanti van Chs Ltd, SVP Nagar, Mhada Andheri west Mumbai, 400053","pin":"400053","from":"04/01/2025","to":"31/03/2026","deposit":100000,"rents":[35000],"file":"Andheri Staff Room Agreement.pdf"},{"tenant":"Osi Hospitality Pvt ltd(Private Limited Company)","building":"Flat D3","location":"Flat D3, Floor Ground, Sweekar CHS Khira Nagar, Opp S V Road, Santacruz West Mumbai, 400054","pin":"400054","from":"04/01/2025","to":"31/03/2028","deposit":150000,"rents":[42000,44940,48086],"file":"Khira Nagar Rent Agreement.pdf"},{"tenant":"Osi Hospitality Private Limited (Private Limited Company)","building":"Flat 608","location":"Flat 608, Floor 6th, Kamdhenu Apna Ghar Unit No 14 CHS Ltd, 1st Cross Lane, Andheri West, 400053","pin":"400053","from":"15/03/2025","to":"14/03/2028","deposit":300000,"rents":[60000,63000,66000],"file":"608 Building 4 Rent Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 703","location":"Flat 703, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011","pin":"400011","from":"15/03/2025","to":"14/03/2028","deposit":200000,"rents":[80000,84000,88200],"file":"Bellagio Residency 703.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 701","location":"Flat 701, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011","pin":"400011","from":"15/03/2025","to":"14/03/2028","deposit":200000,"rents":[80000,84000,88200],"file":"Bellagio Residency 701.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 702","location":"Flat 702, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011","pin":"400011","from":"15/03/2025","to":"14/03/2028","deposit":200000,"rents":[80000,84000,88200],"file":"Bellagio Residency 702.pdf"},{"tenant":"Omkar Umesh Jaggi (proprietor of osi hospitality)","building":"Flat A-102","location":"Flat A-102, Floor 1st, Basheera Residency, Chapel Road, Bandra West Mumbai, 400050","pin":"400050","from":"21/12/2024","to":"20/12/2026","deposit":180000,"rents":[20000,21000],"file":"A 102 Basheera Residency.pdf"},{"tenant":"Omkar umesh jaggi Proprietor of osi hospitality","building":"Flat 603","location":"Flat 603, Floor 6th, Kamdhenu Building 2, Lokhandwala Complex, andheri West Mumbai, 400053","pin":"400053","from":"22/09/2024","to":"21/09/2029","deposit":200000,"rents":[71532,76540,81897,87630,93764],"file":"603 Lokhandwala Kamdhenu.pdf"},{"tenant":"Osi Hospitality Private Limited(Private Limited Company)","building":"Flat 302","location":"Flat 302, Floor 3RD, KAMDHENU APNA GHAR UNIT NO.14 C.H.S.L, 1ST CROSS LANE, ANDHERI WEST, 400053","pin":"400053","from":"12/01/2024","to":"30/11/2027","deposit":200000,"rents":[40000,42000,44000],"file":"302 Lokhandwala Latif Ghaswala.pdf"},{"tenant":"Osi Hospitality (Private Limited Company)","building":"Floor 1ST","location":"Floor 1ST, MURLI GOVIND, 33RD ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"01/10/2025","to":"01/09/2027","deposit":250000,"rents":[80000,84000],"file":"Manish Balumal Makhija L L AGREEMENT 16 Murali Govind.pdf"},{"tenant":"Osi Hospitality (Private Limited Company)","building":"Floor 1ST","location":"Floor 1ST, MURLI GOVIND, 33RD ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"01/10/2025","to":"01/09/2028","deposit":225000,"rents":[20000],"file":"Neeta Mohanlal Valecha L L AGREEMENT 10 Murali Govind.pdf"},{"tenant":"Osi hosipitality Private Limited(Private Limited Company)","building":"Flat 503","location":"Flat 503, Floor 5th, 16th Road, Bandra West, 400050","pin":"400050","from":"01/05/2025","to":"01/04/2028","deposit":500000,"rents":[130000,136500,143325],"file":"503 Fortune Crown.pdf"},{"tenant":"Omkar Umesh Jaggi Proprietor Of Osi Hospitality","building":"Floor 3rd","location":"Floor 3rd, Balaji Darshan, Tilak Road, Santacruz West Mumbai, 400054","pin":"400054","from":"14/10/2024","to":"13/09/2025","deposit":120000,"rents":[30700],"file":"Office Agreement Santacruz.pdf"},{"tenant":"Osi Hospitality (Proprietorship)","building":"Flat 605","location":"Flat 605, Floor 6th, Kamdhenu Apna Ghar Unit No. 14 chs ltd, Lokhandwala Complex, Andheri West Mumbai, 400053","pin":"400053","from":"10/10/2024","to":"10/09/2027","deposit":150000,"rents":[20000],"file":"605 Lokhandwala Renewed Agreement.pdf"},{"tenant":"Osi Hospitality (Proprietorship)","building":"Flat 605","location":"Flat 605, Floor 6th, Kamdhenu Apna Ghar Unit No. 14 chs ltd, Lokhandwala Complex, Andheri West Mumbai, 400053","pin":"400053","from":"10/10/2024","to":"10/09/2027","deposit":150000,"rents":[20000],"file":"605 Lokhandwala New Agreements.pdf"},{"tenant":"OSI HOSPITALITY","building":"Floor 5th","location":"Floor 5th, MURALI GOVIND, 33r ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"15/08/2024","to":"14/08/2027","deposit":300000,"rents":[80000,84000,89000],"file":"503 Murali Govind.pdf"},{"tenant":"Omkar umesh Jaggi I(proprietor of osi hospitality)","building":"Flat 101","location":"Flat 101, Floor 1st, 192 Gurudarshan Bldg, Anna Sagar Marg, Kurla West Mumbai, 400070","pin":"400070","from":"09/01/2024","to":"31/08/2029","deposit":220000,"rents":[40000],"file":"Gurudarshan Kurla New Flat.pdf"},{"tenant":"Omkar Umesh Jaggi I(proprietor Of Osi Hospitality)","building":"Flat 302","location":"Flat 302, Floor 3rd, Marina Bldg, Off Hill Road And S V Road, Bandra West Mumbai, 400050","pin":"400050","from":"09/10/2024","to":"09/09/2027","deposit":100000,"rents":[20000],"file":"302 Marina Renewal Agreement.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat B-502","location":"Flat B-502, Floor 5th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070","pin":"400070","from":"20/07/2024","to":"19/07/2026","deposit":240000,"rents":[60000,63000],"file":"B 502 Omkar Vive.pdf"},{"tenant":"Omkar Umesh Jaggi(proprietor Of Osi Hospitality)","building":"Floor 2nd","location":"Floor 2nd, 192 Guru Darshan Bldg, Anna Sagar Marg, Kurla West Mumbai, 400070","pin":"400070","from":"15/05/2024","to":"14/05/2029","deposit":220000,"rents":[40000],"file":"2nd Floor Gursarshan Apartmen.pdf"},{"tenant":"osi hospitality","building":"Flat 102","location":"Flat 102, Floor 1st, Convent view, Almeida Park, Bandra West Mumbai 400050, 400000","pin":"400050","from":"07/01/2024","to":"30/06/2027","deposit":400000,"rents":[70000,73500,77175],"file":"Covent View Rent Agreement.pdf"},{"tenant":"Omkar umesh jaggi(proprietor of osi hospitality)","building":"Flat 301","location":"Flat 301, Floor 3rd, Godfrey Villa, 57 Chapel Road, Bandra West Mumbai, 400050","pin":"400050","from":"07/01/2024","to":"30/06/2026","deposit":200000,"rents":[20000],"file":"Godfrey Villa Staff Room Agreement.pdf"},{"tenant":"Osi Hospitality(Proprietorship)","building":"Flat 1501","location":"Flat 1501, Floor 15TH, MOHINI CASTLE, 3RD ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"08/01/2024","to":"31/07/2027","deposit":330000,"rents":[90000,94500,99225],"file":"1501 Mohini Castle Agreement.pdf"},{"tenant":"Omkar umesh jaggi Proprietor of osi Hospitality","building":"Flat B-103","location":"Flat B-103, Floor 1st, Laxmi Chayya, 2nd Road TPS 6 Near Milan Subway, Santacruz West Mumbai, 400054","pin":"400054","from":"08/01/2024","to":"31/07/2027","deposit":350000,"rents":[70000,73500,77175],"file":"B 103 Laxmi Chaya.pdf"},{"tenant":"Osi Hospitality(Proprietorship)","building":"Flat 1501","location":"Flat 1501, Floor 15TH, MOHINI CASTLE, 3RD ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"08/01/2024","to":"31/07/2027","deposit":330000,"rents":[90000,94500,99225],"file":"1501 Mohini Castle Apartment.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 501","location":"Flat 501, Floor 5th, 20th Road Next to St. Elias School, Khar West, 400000","pin":"400000","from":"07/01/2024","to":"30/06/2027","deposit":400000,"rents":[45000,68250,71663],"file":"501 Pali Carters.pdf"},{"tenant":"Omkar umesh jaggi (Proprietor Of Osi Hospitality)","building":"Flat A-304","location":"Flat A-304, Floor 3rd, Laxmi Chhaya, 2nd TPS 6 Near Milan Subway, Sntacruz West Mumbai, 400054","pin":"400054","from":"04/01/2024","to":"31/03/2027","deposit":200000,"rents":[70000,75250,80900],"file":"Laxmi Chaya A 304.pdf"},{"tenant":"Omkar umesh Jaggi (proprietor of osi hospitality)","building":"Flat 303","location":"Flat 303, Floor 3rd, Laxmi Chayya, 2nd TPS 6 Near Milan Subway, Santacruz West Mumbai, 400054","pin":"400054","from":"04/10/2024","to":"04/09/2027","deposit":200000,"rents":[20000,21500,23113],"file":"Laxmi Chaya B 303.pdf"},{"tenant":"Omkar Umesh Jaggi(Proprietor Of Osi Hospitality)","building":"Flat 204","location":"Flat 204, New Laxmi Chaya CHSL, TPS 6 Road No 2, Santacruz West Mumbai, 400054","pin":"400054","from":"04/01/2024","to":"31/03/2027","deposit":200000,"rents":[20000],"file":"Laxmi Chaya B 204.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 102","location":"Flat 102, Floor 1st, Angel View, Chapel Road, Bandra West, 400050","pin":"400050","from":"08/01/2022","to":"31/07/2025","deposit":200000,"rents":[30000,31500,33075],"file":"102 Angel View Changes Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 101","location":"Flat 101, Floor 1st, Angel View, Chapel Road, Bandra West, 400050","pin":"400050","from":"08/01/2022","to":"31/07/2025","deposit":200000,"rents":[30000,31500,33075],"file":"102 Angel View.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 102","location":"Flat 102, Floor 1st, Angel View, Chapel Road, Bandra West, 400050","pin":"400050","from":"08/01/2022","to":"31/07/2025","deposit":200000,"rents":[30000,31500,33075],"file":"202 Angel View CHS.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat new","location":"Flat new, Floor 8th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070","pin":"400070","from":"02/12/2024","to":"11/11/2026","deposit":200000,"rents":[62000,65100,68355],"file":"B 803 Omkar Vive.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat C-1004","location":"Flat C-1004, Floor 10th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070","pin":"400070","from":"15/11/2023","to":"14/08/2026","deposit":200000,"rents":[65000,68250,71650],"file":"C 1004 Omkar Vive.pdf"},{"tenant":"Osi hospitality","building":"Flat 1102","location":"Flat 1102, Floor 11th, Marina, Off Hill Road And S V Road, Bandra West Mumbai, 400050","pin":"400050","from":"20/04/2023","to":"19/04/2025","deposit":100000,"rents":[50000,52500],"file":"1102 Marina Renewed.pdf"},{"tenant":"Osi hospitality","building":"Flat 303","location":"Flat 303, Floor 3rd, Presidency Bldg, New Kantwadi Road, Bandra West Mumbai, 400050","pin":"400050","from":"05/01/2023","to":"30/04/2026","deposit":300000,"rents":[55000,57750,60640],"file":"303 Presidency.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 602","location":"Flat 602, Solitaire, LIC Colony, Santacruz West, 400056","pin":"400056","from":"19/12/2023","to":"18/12/2026","deposit":540000,"rents":[90000,94500,99225],"file":"602 Solitaire Building.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 802","location":"Flat 802, Solitaire, Lic Colony, Suresh Colony Santacruz West Mumbai, 400056","pin":"400056","from":"19/12/2023","to":"18/12/2026","deposit":540000,"rents":[90000,94500,99225],"file":"802 Solitaire Building.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 502","location":"Flat 502, Solitaire, LIC Colony, Santacruz West, 400056","pin":"400056","from":"19/12/2023","to":"18/12/2026","deposit":540000,"rents":[90000,94500,99225],"file":"502 Solitaire Building.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat C-103","location":"Flat C-103, Omkar Vive BKC, Match Factory Lane, BMC Colony Kurla Mumbai, 400070","pin":"400070","from":"10/10/2023","to":"10/09/2026","deposit":150000,"rents":[57000,59850,62842],"file":"103 Omkar Vive Renewal Agreemen.pdf"},{"tenant":"Osi hospitality","building":"Flat 401","location":"Flat 401, Floor 4th, Khar Shakti pali carters, Khar West Mumbai, 400052","pin":"400052","from":"06/10/2023","to":"06/09/2026","deposit":200000,"rents":[60000,63000,66150],"file":"401 Pali Carters Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat FLAT","location":"Flat FLAT, Floor 4TH, AAFIYAH HEIGHTS C.H.S.L, 19TH ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"03/01/2023","to":"28/02/2026","deposit":200000,"rents":[32500,34125,35831],"file":"401 Jastcon Rent Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 601","location":"Flat 601, Floor 6th, Khar Shakti Pali Carters, 20th Road, Khar West, 400052","pin":"400052","from":"15/03/2023","to":"14/03/2026","deposit":200000,"rents":[18000],"file":"601 Pali Carter Rent.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 402","location":"Flat 402, Floor 4th, Presidency Apartment, New Kantwadi Road Behind SBI and Agicha House, Bandra West, 400050","pin":"400050","from":"05/01/2023","to":"30/04/2026","deposit":1000000,"rents":[37500,39375,41343],"file":"402 Presidency Rent Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 302","location":"Flat 302, Floor 3rd, Presidency Apartment, New Kantwadi Road Behind SBI and Agicha House, Bandra West, 400050","pin":"400050","from":"05/01/2023","to":"30/04/2026","deposit":1000000,"rents":[37500,39375,41343],"file":"302 Presidency Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 601","location":"Flat 601, Floor 6th, Khar Shakti Pali Carters, 20th Road, Khar West, 400052","pin":"400052","from":"15/03/2023","to":"14/03/2026","deposit":200000,"rents":[18000],"file":"601 Pali Carters.pdf"},{"tenant":"Osi hospitality","building":"Flat 202","location":"Flat 202, Floor 2nd, Sefa House, Pali Mala Road, Bandra West Mumbai, 400050","pin":"400050","from":"12/01/2023","to":"30/11/2026","deposit":50000,"rents":[28000,30000],"file":"Sefa House Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat FLAT","location":"Flat FLAT, Floor 4TH, AAFIYAH HEIGHTS C.H.S.L, 19TH ROAD, KHAR WEST MUMBAI, 400052","pin":"400052","from":"03/01/2023","to":"28/02/2026","deposit":200000,"rents":[32500,34125,35831],"file":"401 Afiya Heights.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 16A","location":"Flat 16A, Floor Ground, Elizabeth House, Station Cross Road, Bandra West Mumbai, 400050","pin":"400050","from":"02/01/2023","to":"31/01/2026","deposit":100000,"rents":[40000,42000,44100],"file":"Elizabeth House Staff Room.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 1101","location":"Flat 1101, Floor 11th, 20th Road, Khar West, 400052","pin":"400052","from":"15/01/2023","to":"14/01/2026","deposit":330000,"rents":[60000],"file":"1101 Pali Carters.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat A-903","location":"Flat A-903, Floor 9th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070","pin":"400070","from":"20/01/2023","to":"19/01/2026","deposit":150000,"rents":[42000,44100,46305],"file":"A-903 BKC Omkar Vive.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 202","location":"Flat 202, Floor 2nd, Angel View, Chapel Road, Bandra West, 400050","pin":"400050","from":"01/10/2023","to":"01/09/2026","deposit":200000,"rents":[55000,57750,60637],"file":"202 Angel View.pdf"},{"tenant":"Jaggi Omkar Umesh","building":"Flat B-504","location":"Flat B-504, Floor 8th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070","pin":"400070","from":"15/12/2022","to":"14/12/2025","deposit":200000,"rents":[52000,54600,57330],"file":"B-504 Omkar Vive Agreement.pdf"},{"tenant":". OMKAR UMESH JAGGI (PROP.OSI HOSPITALITY)","building":"Flat 201","location":"Flat 201, Floor 2, WHITE ROSE BUILDING, BANDRA WEST, 400050","pin":"400050","from":"12/05/2022","to":"12/04/2025","deposit":228000,"rents":[57000,59850,62843],"file":"201 White Rose Agreement.pdf"},{"tenant":"Omkar Umesh Jaggi (Propritor Of OSI Hospitality)","building":"Flat 402","location":"Flat 402, Floor 4th, Ashirwad CHSL, Plot no 4","pin":"","from":"28/11/2022","to":"27/11/2025","deposit":300000,"rents":[60000,63000,66150],"file":"402 Ashirwad CHS.pdf"},{"tenant":"ONNSHELTER HOSPITALITY LLP","building":"302 Khar Shakti Pali Carter Rent Agreement","location":"302 Khar Shakti Pali Carter Rent Agreement","pin":"","from":"\u2014","to":"\u2014","deposit":6284,"rents":[57000],"file":"302 Khar Shakti Pali Carter Rent Agreement.pdf"},{"tenant":"Jaggi Omkar Umesh (Proprietor Of OSI Hospitality)","building":"Flat 903","location":"Flat 903, Floor 9th, Ashirwad Co-op Housing Society Ltd, Sahar Road, Andheri East, 400069","pin":"400069","from":"16/09/2022","to":"15/09/2025","deposit":240000,"rents":[80000],"file":"903&904 Ashirwad CHS.pdf"},{"tenant":"Jaggi Omkar Umesh (Proprietor Of OSI Hospitality)","building":"Flat 701","location":"Flat 701, Floor 7th, Ashirwad Co-op Housing Society Ltd, Sahar Road, Andheri East, 400093","pin":"400093","from":"16/09/2022","to":"15/09/2025","deposit":150000,"rents":[50000,52500,55125],"file":"701 Ashirwad CHS Andheri East.pdf"},{"tenant":"Omkar Umesh Jaggi","building":"Flat 501","location":"Flat 501, Floor 5th, Chapel Road, Bandra West, 400050","pin":"400050","from":"03/05/2022","to":"03/04/2024","deposit":150000,"rents":[20000,21000],"file":"501 Angel View Rent Agreement.pdf"}];
+    const DUMMY = { months: ["Apr-26", "May-26", "Jun-26", "Jul-26", "Aug-26", "Sep-26", "Oct-26", "Nov-26", "Dec-26", "Jan-27", "Feb-27", "Mar-27"], ledgers: [] };
+
+    const PROPERTIES = [{ "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 908", "location": "Flat 908, Floor 9, Bellagio Residency, Sane guruji marg, 400011", "pin": "400011", "from": "20/02/2026", "to": "19/02/2029", "deposit": 246000, "rents": [82000, 86100, 90405], "file": "908 Bellagio Rent Agreement.pdf" }, { "tenant": "Osi Hospitality Private Limited", "building": "SAI KANWAL COMPLEX", "location": "SAI KANWAL COMPLEX, 400053", "pin": "400053", "from": "20/02/2026", "to": "19/02/2029", "deposit": 390000, "rents": [130000, 136500, 143325], "file": "101 and 102 Sai Kanwal.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "SHAPOORJI PALLONJI BKC 28", "location": "SHAPOORJI PALLONJI BKC 28, 400051", "pin": "400051", "from": "15/02/2026", "to": "14/02/2029", "deposit": 285000, "rents": [95000, 99750, 104738], "file": "B 604 Shapoorji Pallonji.pdf" }, { "tenant": "OSI Hospitality Private Limited", "building": "Shapoorji Pallonji BKC 28", "location": "Shapoorji Pallonji BKC 28, 400051", "pin": "400051", "from": "20/01/2026", "to": "19/01/2028", "deposit": 214000, "rents": [107000, 112350], "file": "A 1703 Shapoorji Pallonji.pdf" }, { "tenant": "OSI Hospitality Private Limited", "building": "Shapoorji Pallonji BKC 28", "location": "Shapoorji Pallonji BKC 28, 400051", "pin": "400051", "from": "01/10/2026", "to": "01/09/2029", "deposit": 345000, "rents": [115000, 120750, 126788], "file": "A 2204 Shapoorji Pallonji.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat B-402", "location": "Flat B-402, Floor 4, Omkar View BKC, 400070", "pin": "400070", "from": "01/01/2026", "to": "31/12/2028", "deposit": 189000, "rents": [33000, 34650, 36383], "file": "402 Omkar Vive.pdf" }, { "tenant": "OSI Hospitality Private Limited", "building": "Flat A1703", "location": "Flat A1703, Floor 17, Shapoorji Pallonji BKC 28, 400051", "pin": "400051", "from": "20/01/2026", "to": "19/01/2028", "deposit": 214000, "rents": [107000, 112350], "file": "1703 Shapoorji Pallonji Agreement.pdf" }, { "tenant": "OSI HOSPITALITY PVT LTD", "building": "Flat 1401", "location": "Flat 1401, Floor 14, Pali Carter, 400052", "pin": "400052", "from": "02/12/2026", "to": "02/11/2028", "deposit": 400000, "rents": [155000, 162750], "file": "1401 Pali Carters.pdf" }, { "tenant": "OSI HOSPITALITY PVT LTD", "building": "Flat 1101", "location": "Flat 1101, Floor 11, Khar Shakti Bldg Khar Pali Carters, 400052", "pin": "400052", "from": "15/01/2026", "to": "14/01/2029", "deposit": 450000, "rents": [60000], "file": "1101 Pali Carters Renewal Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat C-301", "location": "Flat C-301, Floor 3, Omkar View BKC, 400070", "pin": "400070", "from": "15/10/2025", "to": "14/11/2028", "deposit": 180000, "rents": [62000, 65100, 68355], "file": "301 Omkar Vive.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 702", "location": "Flat 702, Floor 7, QUEEN SQUARE APARTMENT, 400054", "pin": "400054", "from": "24/12/2025", "to": "23/12/2028", "deposit": 400000, "rents": [45000, 47250, 49613], "file": "702 Queen Square.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 701", "location": "Flat 701, Floor 7, QUEEN SQUARE APARTMENTS, 400054", "pin": "400054", "from": "24/12/2025", "to": "23/12/2028", "deposit": 220000, "rents": [25000, 26250, 27563], "file": "701 Queen Square.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 704", "location": "Flat 704, Floor 7, QUEEN SQUARE APARTMENTS, 400054", "pin": "400054", "from": "24/12/2025", "to": "23/12/2028", "deposit": 300000, "rents": [45000, 47250, 49613], "file": "704 Queen Square.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 703", "location": "Flat 703, Floor 7, QUEEN SQUARE APARTMENTS, 400054", "pin": "400054", "from": "24/12/2025", "to": "23/12/2028", "deposit": 450000, "rents": [45000, 47250, 49613], "file": "703 Queen Square.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 401", "location": "Flat 401, Floor 4, WHITE ROSE, 400050", "pin": "400050", "from": "15/01/2026", "to": "14/01/2029", "deposit": 250000, "rents": [40000, 42000, 44100], "file": "401 White Rose Agreement.pdf" }, { "tenant": "OSI HOSPITALITY PVT LTD", "building": "Flat 402", "location": "Flat 402, Floor 4, Ashirwad CHSL, 400069", "pin": "400069", "from": "28/11/2025", "to": "27/11/2028", "deposit": 300000, "rents": [69458, 72931, 76578], "file": "402 Ashirwad New Agreement.pdf" }, { "tenant": "Osi Hospitality Pvt Ltd(Private Limited Company)", "building": "Flat A-817", "location": "Flat A-817, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014", "pin": "411014", "from": "11/01/2025", "to": "31/10/2028", "deposit": 115500, "rents": [38500, 40425, 42446], "file": "A 817 Neon Hometel.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 201", "location": "Flat 201, Floor 2, WHITE ROSE BUILDING, 400050", "pin": "400050", "from": "12/05/2025", "to": "12/04/2028", "deposit": 228000, "rents": [66000, 69300, 72765], "file": "201 White Rose Agreement New Renewal.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 103", "location": "Flat 103, Floor First, Neon Hometel, Phule Nagar Near RTO Office, Viman Nagar Pune, 411014", "pin": "411014", "from": "11/01/2025", "to": "31/10/2028", "deposit": 120000, "rents": [40000, 42000, 44100], "file": "B 103 Neon Hometel.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat C-301", "location": "Flat C-301, Floor 3, Omkar View BKC, 400070", "pin": "400070", "from": "15/10/2025", "to": "14/11/2028", "deposit": 180000, "rents": [62000, 65100, 68355], "file": "301 Omkar Vive Rent Agreement.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 102", "location": "Flat 102, Floor 1, BENSTON APPT, 400050", "pin": "400050", "from": "16/11/2025", "to": "15/11/2028", "deposit": 200000, "rents": [45000, 47250, 49613], "file": "Benston Changed New Agreement.pdf" }, { "tenant": "OSI Hospitality Private Limited", "building": "Flat 902", "location": "Flat 902, Floor 9, Khar Shakti A Wing, 400052", "pin": "400052", "from": "21/10/2025", "to": "20/10/2028", "deposit": 300000, "rents": [67000, 70350, 73867], "file": "902 Pali Carters.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 103", "location": "Flat 103, Floor First, Neon Hometel, Phule Nagar Near RTO Office, Viman Nagar Pune, 411014", "pin": "411014", "from": "11/01/2025", "to": "31/10/2028", "deposit": 120000, "rents": [40000, 42000, 44100], "file": "B 103 neon hometel new agreement.pdf" }, { "tenant": "Osi Hospitality Pvt Ltd(Private Limited Company)", "building": "Flat A-817", "location": "Flat A-817, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014", "pin": "411014", "from": "11/01/2025", "to": "31/10/2028", "deposit": 115500, "rents": [38500, 40425, 42446], "file": "A 817 Neon Agreement.pdf" }, { "tenant": "- Osi Hospitality pvt.ltd.(Private Limited Company)", "building": "Flat B-201", "location": "Flat B-201, Floor 2nd, Neon Hometel Mhada Colony, Viman Nagar, Pune Maharashtra, 411014", "pin": "411014", "from": "26/10/2025", "to": "25/10/2028", "deposit": 60000, "rents": [30000, 31500, 33075], "file": "B 201 Neon Rent Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 202", "location": "Flat 202, Floor 2nd, Angel View, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "01/10/2023", "to": "01/09/2026", "deposit": 200000, "rents": [55000, 57750, 60637, 200000], "file": "202 Angel View Agreement.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 315", "location": "Flat 315, Floor 3rd, Neon Hometel, JPN Road, Viman Nagar Pune, 411014", "pin": "411014", "from": "25/09/2025", "to": "24/09/2028", "deposit": 60000, "rents": [28000, 29680, 31461], "file": "B 315 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 912", "location": "Flat 912, Floor Ninth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/07/2025", "to": "14/07/2028", "deposit": 55000, "rents": [27500, 29562, 31780], "file": "B 912 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Floor Second", "location": "Floor Second, Plot No 52, Lane No 6, Mahada Colony, 411014", "pin": "411014", "from": "08/11/2025", "to": "07/10/2026", "deposit": 32000, "rents": [16000], "file": "Pune Staff Room Agreement.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 508", "location": "Flat 508, Floor Fifth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "09/01/2025", "to": "31/08/2028", "deposit": 58000, "rents": [29000, 30740, 32585], "file": "A 508 Neon Hometel.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 401", "location": "Flat 401, Floor 4, Angel View, 400050", "pin": "400050", "from": "10/05/2025", "to": "01/04/2027", "deposit": 1900000, "rents": [1, 30000], "file": "401 Angel View Rent Agreement.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Floor 17", "location": "Floor 17, RANGE HEIGHTS, 400102", "pin": "400102", "from": "10/10/2025", "to": "10/09/2027", "deposit": 200000, "rents": [49000, 51450], "file": "1701 Range Heights New Agreement.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 701", "location": "Flat 701, Floor 7, Ashirwad CHS LTD, 400093", "pin": "400093", "from": "16/09/2025", "to": "15/09/2028", "deposit": 150000, "rents": [60000, 63000, 66150], "file": "701 Ashirwad Renewal Rent.pdf" }, { "tenant": "OSI HOSPITALITY PRIVATE LIMITED", "building": "Flat 301", "location": "Flat 301, Floor 3, KRISHNA VILLA, 400054", "pin": "400054", "from": "09/01/2025", "to": "31/08/2028", "deposit": 200000, "rents": [48000], "file": "Krishna Villa Staff Room Agreement.pdf" }, { "tenant": "- OSI Hospitality Pvt Ltd (Private Limited Company)", "building": "Flat 205", "location": "Flat 205, Floor Second, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "09/01/2025", "to": "31/05/2028", "deposit": 150000, "rents": [42000, 44940, 48085], "file": "B 205 Neon Hometel.pdf" }, { "tenant": "Osi hospitality Private Limited (Private Limited Company)", "building": "Flat A-203", "location": "Flat A-203, Floor 2, Neon Hometels, Lohgaon", "pin": "", "from": "10/10/2025", "to": "10/09/2028", "deposit": 126000, "rents": [42000, 44100, 46305], "file": "A 203 Neon Hometel.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 217", "location": "Flat 217, Floor Second, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/09/2025", "to": "14/09/2028", "deposit": 60000, "rents": [30000, 32100, 34347], "file": "A 217 Neon Hometel.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 409", "location": "Flat 409, Floor Fourth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/09/2025", "to": "14/09/2028", "deposit": 30000, "rents": [10000, 10700, 11449], "file": "B 409 Neon Hometel.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 808", "location": "Flat 808, Floor Eighth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/09/2025", "to": "14/09/2028", "deposit": 30000, "rents": [10000, 10700, 11449], "file": "B 808 Neon Hometel.pdf" }, { "tenant": "Osi Hospitality Pvt. Ltd(Private Limited Company)", "building": "Flat A-609", "location": "Flat A-609, Floor 6th, Neon Hometel, Near Airport, Viman Nagar, 411014", "pin": "411014", "from": "09/01/2025", "to": "31/08/2028", "deposit": 120000, "rents": [30000, 31800, 33708], "file": "A 609 Neon Hometel Rent Agreement.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 101", "location": "Flat 101, Floor First, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/07/2025", "to": "14/07/2028", "deposit": 56000, "rents": [28000, 29400, 30870], "file": "A 101 Neon Hometel.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 202", "location": "Flat 202, Floor Second, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/07/2025", "to": "14/07/2028", "deposit": 56000, "rents": [28000, 29400, 30870], "file": "A 202 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 405", "location": "Flat 405, Floor Fourth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/08/2025", "to": "14/08/2028", "deposit": 56000, "rents": [28000, 29960, 32057], "file": "A 405 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 114", "location": "Flat 114, Floor First, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/08/2025", "to": "14/08/2028", "deposit": 55000, "rents": [27500, 29425, 31485], "file": "B 114 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 517", "location": "Flat 517, Floor Fifth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/08/2025", "to": "14/08/2028", "deposit": 56000, "rents": [28000, 29400, 30870], "file": "A 517 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt Ltd (Private Limited Company)", "building": "Flat 910", "location": "Flat 910, Floor Ninth, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/08/2025", "to": "14/08/2028", "deposit": 52000, "rents": [26000, 27820, 29770], "file": "A 910 Neon Pune.pdf" }, { "tenant": "- OSI Hospitality Pvt. Ltd. (Private Limited Company)", "building": "Flat 102", "location": "Flat 102, Floor First, Neon Hometel, Viman Nagar Pune, 411014", "pin": "411014", "from": "15/08/2025", "to": "14/08/2028", "deposit": 56000, "rents": [28000, 29960, 32057], "file": "A 102 Neon Pune.pdf" }, { "tenant": "Osi hospitality Private Limited (Private Limited Company)", "building": "Flat A-203", "location": "Flat A-203, Floor 2, Neon Hometels, Lohgaon", "pin": "", "from": "10/10/2025", "to": "10/09/2028", "deposit": 126000, "rents": [42000, 44100, 46305], "file": "Neon Hometel 203 Omkar J.pdf" }, { "tenant": "- OSI HOSPITALIY PRIVATE LIMITED (Private Limited Company)", "building": "Flat Room", "location": "Flat Room, Versova Andheri Shanti van Chs Ltd, SVP Nagar, Mhada Andheri west Mumbai, 400053", "pin": "400053", "from": "04/01/2025", "to": "31/03/2026", "deposit": 100000, "rents": [35000], "file": "Andheri Staff Room Agreement.pdf" }, { "tenant": "Osi Hospitality Pvt ltd(Private Limited Company)", "building": "Flat D3", "location": "Flat D3, Floor Ground, Sweekar CHS Khira Nagar, Opp S V Road, Santacruz West Mumbai, 400054", "pin": "400054", "from": "04/01/2025", "to": "31/03/2028", "deposit": 150000, "rents": [42000, 44940, 48086], "file": "Khira Nagar Rent Agreement.pdf" }, { "tenant": "Osi Hospitality Private Limited (Private Limited Company)", "building": "Flat 608", "location": "Flat 608, Floor 6th, Kamdhenu Apna Ghar Unit No 14 CHS Ltd, 1st Cross Lane, Andheri West, 400053", "pin": "400053", "from": "15/03/2025", "to": "14/03/2028", "deposit": 300000, "rents": [60000, 63000, 66000], "file": "608 Building 4 Rent Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 703", "location": "Flat 703, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011", "pin": "400011", "from": "15/03/2025", "to": "14/03/2028", "deposit": 200000, "rents": [80000, 84000, 88200], "file": "Bellagio Residency 703.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 701", "location": "Flat 701, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011", "pin": "400011", "from": "15/03/2025", "to": "14/03/2028", "deposit": 200000, "rents": [80000, 84000, 88200], "file": "Bellagio Residency 701.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 702", "location": "Flat 702, Floor 7th, Sane Guruji Marg, Mumbai Cental Mumbai, 400011", "pin": "400011", "from": "15/03/2025", "to": "14/03/2028", "deposit": 200000, "rents": [80000, 84000, 88200], "file": "Bellagio Residency 702.pdf" }, { "tenant": "Omkar Umesh Jaggi (proprietor of osi hospitality)", "building": "Flat A-102", "location": "Flat A-102, Floor 1st, Basheera Residency, Chapel Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "21/12/2024", "to": "20/12/2026", "deposit": 180000, "rents": [20000, 21000], "file": "A 102 Basheera Residency.pdf" }, { "tenant": "Omkar umesh jaggi Proprietor of osi hospitality", "building": "Flat 603", "location": "Flat 603, Floor 6th, Kamdhenu Building 2, Lokhandwala Complex, andheri West Mumbai, 400053", "pin": "400053", "from": "22/09/2024", "to": "21/09/2029", "deposit": 200000, "rents": [71532, 76540, 81897, 87630, 93764], "file": "603 Lokhandwala Kamdhenu.pdf" }, { "tenant": "Osi Hospitality Private Limited(Private Limited Company)", "building": "Flat 302", "location": "Flat 302, Floor 3RD, KAMDHENU APNA GHAR UNIT NO.14 C.H.S.L, 1ST CROSS LANE, ANDHERI WEST, 400053", "pin": "400053", "from": "12/01/2024", "to": "30/11/2027", "deposit": 200000, "rents": [40000, 42000, 44000], "file": "302 Lokhandwala Latif Ghaswala.pdf" }, { "tenant": "Osi Hospitality (Private Limited Company)", "building": "Floor 1ST", "location": "Floor 1ST, MURLI GOVIND, 33RD ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "01/10/2025", "to": "01/09/2027", "deposit": 250000, "rents": [80000, 84000], "file": "Manish Balumal Makhija L L AGREEMENT 16 Murali Govind.pdf" }, { "tenant": "Osi Hospitality (Private Limited Company)", "building": "Floor 1ST", "location": "Floor 1ST, MURLI GOVIND, 33RD ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "01/10/2025", "to": "01/09/2028", "deposit": 225000, "rents": [20000], "file": "Neeta Mohanlal Valecha L L AGREEMENT 10 Murali Govind.pdf" }, { "tenant": "Osi hosipitality Private Limited(Private Limited Company)", "building": "Flat 503", "location": "Flat 503, Floor 5th, 16th Road, Bandra West, 400050", "pin": "400050", "from": "01/05/2025", "to": "01/04/2028", "deposit": 500000, "rents": [130000, 136500, 143325], "file": "503 Fortune Crown.pdf" }, { "tenant": "Omkar Umesh Jaggi Proprietor Of Osi Hospitality", "building": "Floor 3rd", "location": "Floor 3rd, Balaji Darshan, Tilak Road, Santacruz West Mumbai, 400054", "pin": "400054", "from": "14/10/2024", "to": "13/09/2025", "deposit": 120000, "rents": [30700], "file": "Office Agreement Santacruz.pdf" }, { "tenant": "Osi Hospitality (Proprietorship)", "building": "Flat 605", "location": "Flat 605, Floor 6th, Kamdhenu Apna Ghar Unit No. 14 chs ltd, Lokhandwala Complex, Andheri West Mumbai, 400053", "pin": "400053", "from": "10/10/2024", "to": "10/09/2027", "deposit": 150000, "rents": [20000], "file": "605 Lokhandwala Renewed Agreement.pdf" }, { "tenant": "Osi Hospitality (Proprietorship)", "building": "Flat 605", "location": "Flat 605, Floor 6th, Kamdhenu Apna Ghar Unit No. 14 chs ltd, Lokhandwala Complex, Andheri West Mumbai, 400053", "pin": "400053", "from": "10/10/2024", "to": "10/09/2027", "deposit": 150000, "rents": [20000], "file": "605 Lokhandwala New Agreements.pdf" }, { "tenant": "OSI HOSPITALITY", "building": "Floor 5th", "location": "Floor 5th, MURALI GOVIND, 33r ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "15/08/2024", "to": "14/08/2027", "deposit": 300000, "rents": [80000, 84000, 89000], "file": "503 Murali Govind.pdf" }, { "tenant": "Omkar umesh Jaggi I(proprietor of osi hospitality)", "building": "Flat 101", "location": "Flat 101, Floor 1st, 192 Gurudarshan Bldg, Anna Sagar Marg, Kurla West Mumbai, 400070", "pin": "400070", "from": "09/01/2024", "to": "31/08/2029", "deposit": 220000, "rents": [40000], "file": "Gurudarshan Kurla New Flat.pdf" }, { "tenant": "Omkar Umesh Jaggi I(proprietor Of Osi Hospitality)", "building": "Flat 302", "location": "Flat 302, Floor 3rd, Marina Bldg, Off Hill Road And S V Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "09/10/2024", "to": "09/09/2027", "deposit": 100000, "rents": [20000], "file": "302 Marina Renewal Agreement.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat B-502", "location": "Flat B-502, Floor 5th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070", "pin": "400070", "from": "20/07/2024", "to": "19/07/2026", "deposit": 240000, "rents": [60000, 63000], "file": "B 502 Omkar Vive.pdf" }, { "tenant": "Omkar Umesh Jaggi(proprietor Of Osi Hospitality)", "building": "Floor 2nd", "location": "Floor 2nd, 192 Guru Darshan Bldg, Anna Sagar Marg, Kurla West Mumbai, 400070", "pin": "400070", "from": "15/05/2024", "to": "14/05/2029", "deposit": 220000, "rents": [40000], "file": "2nd Floor Gursarshan Apartmen.pdf" }, { "tenant": "osi hospitality", "building": "Flat 102", "location": "Flat 102, Floor 1st, Convent view, Almeida Park, Bandra West Mumbai 400050, 400000", "pin": "400050", "from": "07/01/2024", "to": "30/06/2027", "deposit": 400000, "rents": [70000, 73500, 77175], "file": "Covent View Rent Agreement.pdf" }, { "tenant": "Omkar umesh jaggi(proprietor of osi hospitality)", "building": "Flat 301", "location": "Flat 301, Floor 3rd, Godfrey Villa, 57 Chapel Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "07/01/2024", "to": "30/06/2026", "deposit": 200000, "rents": [20000], "file": "Godfrey Villa Staff Room Agreement.pdf" }, { "tenant": "Osi Hospitality(Proprietorship)", "building": "Flat 1501", "location": "Flat 1501, Floor 15TH, MOHINI CASTLE, 3RD ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "08/01/2024", "to": "31/07/2027", "deposit": 330000, "rents": [90000, 94500, 99225], "file": "1501 Mohini Castle Agreement.pdf" }, { "tenant": "Omkar umesh jaggi Proprietor of osi Hospitality", "building": "Flat B-103", "location": "Flat B-103, Floor 1st, Laxmi Chayya, 2nd Road TPS 6 Near Milan Subway, Santacruz West Mumbai, 400054", "pin": "400054", "from": "08/01/2024", "to": "31/07/2027", "deposit": 350000, "rents": [70000, 73500, 77175], "file": "B 103 Laxmi Chaya.pdf" }, { "tenant": "Osi Hospitality(Proprietorship)", "building": "Flat 1501", "location": "Flat 1501, Floor 15TH, MOHINI CASTLE, 3RD ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "08/01/2024", "to": "31/07/2027", "deposit": 330000, "rents": [90000, 94500, 99225], "file": "1501 Mohini Castle Apartment.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 501", "location": "Flat 501, Floor 5th, 20th Road Next to St. Elias School, Khar West, 400000", "pin": "400000", "from": "07/01/2024", "to": "30/06/2027", "deposit": 400000, "rents": [45000, 68250, 71663], "file": "501 Pali Carters.pdf" }, { "tenant": "Omkar umesh jaggi (Proprietor Of Osi Hospitality)", "building": "Flat A-304", "location": "Flat A-304, Floor 3rd, Laxmi Chhaya, 2nd TPS 6 Near Milan Subway, Sntacruz West Mumbai, 400054", "pin": "400054", "from": "04/01/2024", "to": "31/03/2027", "deposit": 200000, "rents": [70000, 75250, 80900], "file": "Laxmi Chaya A 304.pdf" }, { "tenant": "Omkar umesh Jaggi (proprietor of osi hospitality)", "building": "Flat 303", "location": "Flat 303, Floor 3rd, Laxmi Chayya, 2nd TPS 6 Near Milan Subway, Santacruz West Mumbai, 400054", "pin": "400054", "from": "04/10/2024", "to": "04/09/2027", "deposit": 200000, "rents": [20000, 21500, 23113], "file": "Laxmi Chaya B 303.pdf" }, { "tenant": "Omkar Umesh Jaggi(Proprietor Of Osi Hospitality)", "building": "Flat 204", "location": "Flat 204, New Laxmi Chaya CHSL, TPS 6 Road No 2, Santacruz West Mumbai, 400054", "pin": "400054", "from": "04/01/2024", "to": "31/03/2027", "deposit": 200000, "rents": [20000], "file": "Laxmi Chaya B 204.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 102", "location": "Flat 102, Floor 1st, Angel View, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "08/01/2022", "to": "31/07/2025", "deposit": 200000, "rents": [30000, 31500, 33075], "file": "102 Angel View Changes Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 101", "location": "Flat 101, Floor 1st, Angel View, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "08/01/2022", "to": "31/07/2025", "deposit": 200000, "rents": [30000, 31500, 33075], "file": "102 Angel View.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 102", "location": "Flat 102, Floor 1st, Angel View, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "08/01/2022", "to": "31/07/2025", "deposit": 200000, "rents": [30000, 31500, 33075], "file": "202 Angel View CHS.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat new", "location": "Flat new, Floor 8th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070", "pin": "400070", "from": "02/12/2024", "to": "11/11/2026", "deposit": 200000, "rents": [62000, 65100, 68355], "file": "B 803 Omkar Vive.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat C-1004", "location": "Flat C-1004, Floor 10th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070", "pin": "400070", "from": "15/11/2023", "to": "14/08/2026", "deposit": 200000, "rents": [65000, 68250, 71650], "file": "C 1004 Omkar Vive.pdf" }, { "tenant": "Osi hospitality", "building": "Flat 1102", "location": "Flat 1102, Floor 11th, Marina, Off Hill Road And S V Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "20/04/2023", "to": "19/04/2025", "deposit": 100000, "rents": [50000, 52500], "file": "1102 Marina Renewed.pdf" }, { "tenant": "Osi hospitality", "building": "Flat 303", "location": "Flat 303, Floor 3rd, Presidency Bldg, New Kantwadi Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "05/01/2023", "to": "30/04/2026", "deposit": 300000, "rents": [55000, 57750, 60640], "file": "303 Presidency.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 602", "location": "Flat 602, Solitaire, LIC Colony, Santacruz West, 400056", "pin": "400056", "from": "19/12/2023", "to": "18/12/2026", "deposit": 540000, "rents": [90000, 94500, 99225], "file": "602 Solitaire Building.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 802", "location": "Flat 802, Solitaire, Lic Colony, Suresh Colony Santacruz West Mumbai, 400056", "pin": "400056", "from": "19/12/2023", "to": "18/12/2026", "deposit": 540000, "rents": [90000, 94500, 99225], "file": "802 Solitaire Building.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 502", "location": "Flat 502, Solitaire, LIC Colony, Santacruz West, 400056", "pin": "400056", "from": "19/12/2023", "to": "18/12/2026", "deposit": 540000, "rents": [90000, 94500, 99225], "file": "502 Solitaire Building.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat C-103", "location": "Flat C-103, Omkar Vive BKC, Match Factory Lane, BMC Colony Kurla Mumbai, 400070", "pin": "400070", "from": "10/10/2023", "to": "10/09/2026", "deposit": 150000, "rents": [57000, 59850, 62842], "file": "103 Omkar Vive Renewal Agreemen.pdf" }, { "tenant": "Osi hospitality", "building": "Flat 401", "location": "Flat 401, Floor 4th, Khar Shakti pali carters, Khar West Mumbai, 400052", "pin": "400052", "from": "06/10/2023", "to": "06/09/2026", "deposit": 200000, "rents": [60000, 63000, 66150], "file": "401 Pali Carters Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat FLAT", "location": "Flat FLAT, Floor 4TH, AAFIYAH HEIGHTS C.H.S.L, 19TH ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "03/01/2023", "to": "28/02/2026", "deposit": 200000, "rents": [32500, 34125, 35831], "file": "401 Jastcon Rent Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 601", "location": "Flat 601, Floor 6th, Khar Shakti Pali Carters, 20th Road, Khar West, 400052", "pin": "400052", "from": "15/03/2023", "to": "14/03/2026", "deposit": 200000, "rents": [18000], "file": "601 Pali Carter Rent.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 402", "location": "Flat 402, Floor 4th, Presidency Apartment, New Kantwadi Road Behind SBI and Agicha House, Bandra West, 400050", "pin": "400050", "from": "05/01/2023", "to": "30/04/2026", "deposit": 1000000, "rents": [37500, 39375, 41343], "file": "402 Presidency Rent Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 302", "location": "Flat 302, Floor 3rd, Presidency Apartment, New Kantwadi Road Behind SBI and Agicha House, Bandra West, 400050", "pin": "400050", "from": "05/01/2023", "to": "30/04/2026", "deposit": 1000000, "rents": [37500, 39375, 41343], "file": "302 Presidency Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 601", "location": "Flat 601, Floor 6th, Khar Shakti Pali Carters, 20th Road, Khar West, 400052", "pin": "400052", "from": "15/03/2023", "to": "14/03/2026", "deposit": 200000, "rents": [18000], "file": "601 Pali Carters.pdf" }, { "tenant": "Osi hospitality", "building": "Flat 202", "location": "Flat 202, Floor 2nd, Sefa House, Pali Mala Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "12/01/2023", "to": "30/11/2026", "deposit": 50000, "rents": [28000, 30000], "file": "Sefa House Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat FLAT", "location": "Flat FLAT, Floor 4TH, AAFIYAH HEIGHTS C.H.S.L, 19TH ROAD, KHAR WEST MUMBAI, 400052", "pin": "400052", "from": "03/01/2023", "to": "28/02/2026", "deposit": 200000, "rents": [32500, 34125, 35831], "file": "401 Afiya Heights.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 16A", "location": "Flat 16A, Floor Ground, Elizabeth House, Station Cross Road, Bandra West Mumbai, 400050", "pin": "400050", "from": "02/01/2023", "to": "31/01/2026", "deposit": 100000, "rents": [40000, 42000, 44100], "file": "Elizabeth House Staff Room.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 1101", "location": "Flat 1101, Floor 11th, 20th Road, Khar West, 400052", "pin": "400052", "from": "15/01/2023", "to": "14/01/2026", "deposit": 330000, "rents": [60000], "file": "1101 Pali Carters.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat A-903", "location": "Flat A-903, Floor 9th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070", "pin": "400070", "from": "20/01/2023", "to": "19/01/2026", "deposit": 150000, "rents": [42000, 44100, 46305], "file": "A-903 BKC Omkar Vive.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 202", "location": "Flat 202, Floor 2nd, Angel View, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "01/10/2023", "to": "01/09/2026", "deposit": 200000, "rents": [55000, 57750, 60637], "file": "202 Angel View.pdf" }, { "tenant": "Jaggi Omkar Umesh", "building": "Flat B-504", "location": "Flat B-504, Floor 8th, Omkar Vive BKC, Match Factory Lane, BMC Colony, 400070", "pin": "400070", "from": "15/12/2022", "to": "14/12/2025", "deposit": 200000, "rents": [52000, 54600, 57330], "file": "B-504 Omkar Vive Agreement.pdf" }, { "tenant": ". OMKAR UMESH JAGGI (PROP.OSI HOSPITALITY)", "building": "Flat 201", "location": "Flat 201, Floor 2, WHITE ROSE BUILDING, BANDRA WEST, 400050", "pin": "400050", "from": "12/05/2022", "to": "12/04/2025", "deposit": 228000, "rents": [57000, 59850, 62843], "file": "201 White Rose Agreement.pdf" }, { "tenant": "Omkar Umesh Jaggi (Propritor Of OSI Hospitality)", "building": "Flat 402", "location": "Flat 402, Floor 4th, Ashirwad CHSL, Plot no 4", "pin": "", "from": "28/11/2022", "to": "27/11/2025", "deposit": 300000, "rents": [60000, 63000, 66150], "file": "402 Ashirwad CHS.pdf" }, { "tenant": "ONNSHELTER HOSPITALITY LLP", "building": "302 Khar Shakti Pali Carter Rent Agreement", "location": "302 Khar Shakti Pali Carter Rent Agreement", "pin": "", "from": "\u2014", "to": "\u2014", "deposit": 6284, "rents": [57000], "file": "302 Khar Shakti Pali Carter Rent Agreement.pdf" }, { "tenant": "Jaggi Omkar Umesh (Proprietor Of OSI Hospitality)", "building": "Flat 903", "location": "Flat 903, Floor 9th, Ashirwad Co-op Housing Society Ltd, Sahar Road, Andheri East, 400069", "pin": "400069", "from": "16/09/2022", "to": "15/09/2025", "deposit": 240000, "rents": [80000], "file": "903&904 Ashirwad CHS.pdf" }, { "tenant": "Jaggi Omkar Umesh (Proprietor Of OSI Hospitality)", "building": "Flat 701", "location": "Flat 701, Floor 7th, Ashirwad Co-op Housing Society Ltd, Sahar Road, Andheri East, 400093", "pin": "400093", "from": "16/09/2022", "to": "15/09/2025", "deposit": 150000, "rents": [50000, 52500, 55125], "file": "701 Ashirwad CHS Andheri East.pdf" }, { "tenant": "Omkar Umesh Jaggi", "building": "Flat 501", "location": "Flat 501, Floor 5th, Chapel Road, Bandra West, 400050", "pin": "400050", "from": "03/05/2022", "to": "03/04/2024", "deposit": 150000, "rents": [20000, 21000], "file": "501 Angel View Rent Agreement.pdf" }];
 
     let depItAnnual = 0; // Depreciation as per Income Tax Act (annual)
     function depItMonthly() { return depItAnnual / 12; }
@@ -1228,7 +1444,7 @@
     /** Sync UI: status label + delete button visibility */
     function updateDepItUI() {
       const statusEl = document.getElementById('depItStatus');
-      const delBtn   = document.getElementById('depDelete');
+      const delBtn = document.getElementById('depDelete');
       if (depItAnnual > 0) {
         if (statusEl) statusEl.textContent =
           'Loaded: ₹' + Math.round(depItAnnual).toLocaleString('en-IN') + '/yr · ₹' +
@@ -1370,19 +1586,19 @@
     // Mumbai pincode → readable area name (fallback when location string is too short)
     const PINCODE_AREAS = {
       '400011': 'Sane Guruji Marg', '400050': 'Bandra West',
-      '400051': 'BKC',              '400052': 'Khar West',
-      '400053': 'Santacruz West',   '400054': 'Santacruz',
-      '400056': 'Santacruz (LIC)',  '400069': 'Andheri East',
-      '400070': 'BKC (Kurla)',      '400093': 'Andheri East',
-      '400102': 'Borivali West',    '411014': 'Pune',
+      '400051': 'BKC', '400052': 'Khar West',
+      '400053': 'Santacruz West', '400054': 'Santacruz',
+      '400056': 'Santacruz (LIC)', '400069': 'Andheri East',
+      '400070': 'BKC (Kurla)', '400093': 'Andheri East',
+      '400102': 'Borivali West', '411014': 'Pune',
     };
 
     /** Returns a readable area/locality name for a property record. */
     function propArea(p) {
       const loc = String(p.location || '');
       const parts = loc.split(',').map(s => s.trim()).filter(Boolean);
-      const SKIP  = /^(flat|floor|shop|unit|plot|door|house|room|wing|survey)\b/i;
-      const IS_NUM     = /^\d+$/;
+      const SKIP = /^(flat|floor|shop|unit|plot|door|house|room|wing|survey)\b/i;
+      const IS_NUM = /^\d+$/;
       const IS_PINCODE = /^\d{6}$/;
       const meaningful = parts.filter(t => !SKIP.test(t) && !IS_NUM.test(t) && !IS_PINCODE.test(t));
       // Prefer the last locality-like segment when the address is rich (≥3 meaningful parts)
@@ -1415,7 +1631,7 @@
       throw new Error('Could not find "Total" row with depreciation');
     }
 
-let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
+    let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     let propSort = { key: 'from', dir: 1 };   // default: sort by lease start date
     let propInit = false;                       // guards wirePropControls() one-time wiring
     const COLORS = ['#d65a3c', '#3f7cbf', '#2f9488', '#b8902f', '#4f46e5', '#5b9bd5', '#e0a458', '#6aa84f', '#a0556b', '#4a8da8'];
@@ -1465,14 +1681,14 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     const revenue = () => -pnlSum(l => l.cat === 'Revenue');
     const otherInc = () => -pnlSum(l => l.cat === 'Other Income');
     const catExp = c => pnlSum(l => l.cat === c);
-    const directExp  = () => catExp('Direct Cost') + catExp('Other Expenses');   // Tally: Direct Cost + Rent/Overheads
-    const empCost    = () => catExp('Employee Cost');
-    const otherExp   = () => catExp('Other Expenses');
-    const finCost    = () => catExp('Finance Cost');
-    const deprec     = () => catExp('Depreciation');
-    const gstExp     = () => catExp('GST Expense');
-    const totalExp   = () => directExp() + empCost() + gstExp() + finCost() + deprec();
-    const pbt        = () => revenue() + otherInc() - totalExp();
+    const directExp = () => catExp('Direct Cost') + catExp('Other Expenses');   // Tally: Direct Cost + Rent/Overheads
+    const empCost = () => catExp('Employee Cost');
+    const otherExp = () => catExp('Other Expenses');
+    const finCost = () => catExp('Finance Cost');
+    const deprec = () => catExp('Depreciation');
+    const gstExp = () => catExp('GST Expense');
+    const totalExp = () => directExp() + empCost() + gstExp() + finCost() + deprec();
+    const pbt = () => revenue() + otherInc() - totalExp();
     const taxRate = 0.25168;
     const taxExp = () => Math.max(0, pbt()) * taxRate;
     const pat = () => pbt() - taxExp();
@@ -1588,7 +1804,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     }
 
     // Maps a month name to its YYYY-MM key (e.g. 'Apr-26' → '2026-04')
-    const MON_MAP = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+    const MON_MAP = { jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06', jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12' };
 
     function extractPeriodFromHeader(str) {
       // Accept both 2-digit years ("1-Apr-26") and 4-digit years ("1-Apr-2026")
@@ -1596,8 +1812,8 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       const rx = /(\d{1,2})-([A-Za-z]+)-(\d{2,4})\s+to\s+(\d{1,2})-([A-Za-z]+)-(\d{2,4})/i;
       const m = str.match(rx);
       if (!m) return null;
-      const [,, sm, sy,, em, ey] = m;
-      const smKey = sm.slice(0,3).toLowerCase(), emKey = em.slice(0,3).toLowerCase();
+      const [, , sm, sy, , em, ey] = m;
+      const smKey = sm.slice(0, 3).toLowerCase(), emKey = em.slice(0, 3).toLowerCase();
       if (!MON_MAP[smKey] || !MON_MAP[emKey]) return null;
 
       // Normalise 2-digit years → 4-digit (26 → 2026, 27 → 2027)
@@ -1607,7 +1823,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       const span = (endYr - startYr) * 12 + (endMo - startMo) + 1; // months in range
 
       // End-month dashboard label e.g. 'Apr-26' (always 2-digit year suffix)
-      const endLabel = `${em.charAt(0).toUpperCase()+em.slice(1,3).toLowerCase()}-${String(endYr).slice(-2)}`;
+      const endLabel = `${em.charAt(0).toUpperCase() + em.slice(1, 3).toLowerCase()}-${String(endYr).slice(-2)}`;
 
       if (span <= 1) {
         // Monthly TB
@@ -1618,13 +1834,13 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
         const fyStartYr = startMo >= 4 ? startYr : startYr - 1;
         const qNum = Math.floor(((startMo - 4 + 12) % 12) / 3) + 1;
         const key = `${fyStartYr}-Q${qNum}`;
-        const label = `Q${qNum} (${sm.slice(0,3)}-${em.slice(0,3)} ${String(endYr).slice(-2)})`;
+        const label = `Q${qNum} (${sm.slice(0, 3)}-${em.slice(0, 3)} ${String(endYr).slice(-2)})`;
         return { type: 'quarterly', label, key, endLabel };
       } else {
         // Yearly TB
         const fyStartYr = startMo >= 4 ? startYr : startYr - 1;
         const key = `${fyStartYr}-FY`;
-        const label = `FY ${fyStartYr}-${String(fyStartYr+1).slice(-2)}`;
+        const label = `FY ${fyStartYr}-${String(fyStartYr + 1).slice(-2)}`;
         return { type: 'yearly', label, key, endLabel };
       }
     }
@@ -1771,7 +1987,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       if (qm) {
         const fy = parseInt(qm[1]), q = parseInt(qm[2]);
         // Q1=Jun, Q2=Sep, Q3=Dec, Q4=Mar
-        const endMonths = {1:'Jun',2:'Sep',3:'Dec',4:'Mar'};
+        const endMonths = { 1: 'Jun', 2: 'Sep', 3: 'Dec', 4: 'Mar' };
         const endYr = q === 4 ? fy + 1 : fy;
         const label = `${endMonths[q]}-${String(endYr).slice(-2)}`;
         return DATA.months.indexOf(label);
@@ -1779,7 +1995,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       // Yearly: YYYY-FY → Mar of following year
       const ym = key.match(/^(\d{4})-FY$/);
       if (ym) {
-        const label = `Mar-${String(parseInt(ym[1])+1).slice(-2)}`;
+        const label = `Mar-${String(parseInt(ym[1]) + 1).slice(-2)}`;
         return DATA.months.indexOf(label);
       }
       return -1;
@@ -1848,14 +2064,14 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       loadDepItFromDb(); // Restore IT depreciation from app_settings
     }
 
-    document.getElementById('save-tb-db').onclick = async function() {
+    document.getElementById('save-tb-db').onclick = async function () {
       const monthYear = this.dataset.monthYear;
       const monthLabel = this.dataset.monthLabel;
       if (!monthYear) return;
-      
+
       this.disabled = true;
       this.textContent = '💾 Saving...';
-      
+
       let sb;
       try { sb = getSupabase(); } catch (e) {
         alert('Supabase unavailable: ' + e.message);
@@ -1863,9 +2079,9 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
         this.textContent = '💾 Save to DB';
         return;
       }
-      
+
       const displayLabel = monthYearToLabel(monthYear);
-      
+
       try {
         const { data: existing, error: fetchErr } = await sb
           .from('monthly_uploads')
@@ -2016,26 +2232,26 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       // Re-define buckets to match reference structure:
       //   Direct Expenses  = Direct Cost ledgers only
       //   Indirect Expenses = Employee Cost + GST Expense + Other Expenses (combined)
-      const dirOnly     = catExp('Direct Cost');
+      const dirOnly = catExp('Direct Cost');
       const indirectAll = empCost() + gstExp() + catExp('Other Expenses');
       const eb = rev + oi - dirOnly - indirectAll;   // EBITDA (same total as before)
       const p = pbt(), np = pat();
 
       document.getElementById('pnlKpis').innerHTML = kpiHTML([
-        { l: 'Revenue',           v: fmtCr(rev),       n: periodLabel() },
-        { l: 'EBITDA',            v: fmtCr(eb),        n: pct(eb, rev) + ' margin' },
-        { l: 'Total Expenses',    v: fmtCr(dirOnly + indirectAll + fc + dep), n: pct(dirOnly + indirectAll + fc + dep, rev) + ' of revenue' },
-        { l: 'Profit Before Tax', v: fmtCr(p),         n: pct(p, rev) + ' margin', cls: p >= 0 ? 'pos' : 'neg' },
+        { l: 'Revenue', v: fmtCr(rev), n: periodLabel() },
+        { l: 'EBITDA', v: fmtCr(eb), n: pct(eb, rev) + ' margin' },
+        { l: 'Total Expenses', v: fmtCr(dirOnly + indirectAll + fc + dep), n: pct(dirOnly + indirectAll + fc + dep, rev) + ' of revenue' },
+        { l: 'Profit Before Tax', v: fmtCr(p), n: pct(p, rev) + ' margin', cls: p >= 0 ? 'pos' : 'neg' },
       ]);
       document.getElementById('pnlTrendCap').textContent = 'Monthly (₹)';
-      document.getElementById('pnlTblCap').textContent   = 'Period: ' + periodLabel();
+      document.getElementById('pnlTblCap').textContent = 'Period: ' + periodLabel();
       baseChart();
       destroyChart('pnlTrend');
       charts.pnlTrend = new Chart(document.getElementById('pnlTrend'), {
         type: 'bar',
         data: {
           labels: DATA.months, datasets: [
-            { label: 'Revenue',  data: monthlySeries('revenue'), backgroundColor: '#3f7cbf', borderRadius: 5, maxBarThickness: 14 },
+            { label: 'Revenue', data: monthlySeries('revenue'), backgroundColor: '#3f7cbf', borderRadius: 5, maxBarThickness: 14 },
             { label: 'Expenses', data: monthlySeries('expense'), backgroundColor: '#d65a3c', borderRadius: 5, maxBarThickness: 14 },
             { type: 'line', label: 'Profit', data: monthlySeries('profit'), borderColor: '#2f9488', backgroundColor: '#2f948833', borderWidth: 2, tension: .35, pointRadius: 0, fill: true }]
         },
@@ -2076,19 +2292,19 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       };
 
       // ── Direct Expenses sub-items (reference order) ────────────────────
-      const s_hosting     = sumL(l => l.cat === 'Direct Cost' && l.sub === 'Hosting Charges');
-      const s_site        = sumL(l => l.cat === 'Direct Cost' && l.sub === 'Site Expenses');
+      const s_hosting = sumL(l => l.cat === 'Direct Cost' && l.sub === 'Hosting Charges');
+      const s_site = sumL(l => l.cat === 'Direct Cost' && l.sub === 'Site Expenses');
       const s_otherDirect = sumL(l => l.cat === 'Direct Cost' && l.sub !== 'Hosting Charges' && l.sub !== 'Site Expenses');
-      const s_rent        = sumL(l => l.sub === 'Rent');   // mapped to Other Expenses in Tally but shown under Direct
+      const s_rent = sumL(l => l.sub === 'Rent');   // mapped to Other Expenses in Tally but shown under Direct
 
-      const totalDirect   = s_hosting + s_site + s_otherDirect + s_rent;
+      const totalDirect = s_hosting + s_site + s_otherDirect + s_rent;
 
       // ── Indirect Expenses sub-items (reference order) ──────────────────
-      const s_director    = sumL(l => l.sub === 'Director Remuneration');
-      const s_gst         = sumL(l => l.cat === 'GST Expense');
-      const s_empBenefit  = sumL(l => l.sub === 'Salaries');
-      const s_powerFuel   = sumL(l => l.sub === 'Power & Fuel');
-      const s_otherInd    = sumL(l => l.cat === 'Other Expenses' && l.sub !== 'Rent' && l.sub !== 'Power & Fuel');
+      const s_director = sumL(l => l.sub === 'Director Remuneration');
+      const s_gst = sumL(l => l.cat === 'GST Expense');
+      const s_empBenefit = sumL(l => l.sub === 'Salaries');
+      const s_powerFuel = sumL(l => l.sub === 'Power & Fuel');
+      const s_otherInd = sumL(l => l.cat === 'Other Expenses' && l.sub !== 'Rent' && l.sub !== 'Power & Fuel');
 
       const totalIndirect = s_director + s_gst + s_empBenefit + s_powerFuel + s_otherInd;
 
@@ -2096,27 +2312,27 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       const eb2 = rev + oi - totalDirect - totalIndirect;
 
       const rows = [
-        ['grp',  'Revenue from Operations',          rev,              pct(rev, rev)],
-        oi  !== 0 && ['sub',  'Other Income',         oi,               pct(oi, rev)],
-        ['grp',  'Total Income',                      rev + oi,         pct(rev + oi, rev)],
+        ['grp', 'Revenue from Operations', rev, pct(rev, rev)],
+        oi !== 0 && ['sub', 'Other Income', oi, pct(oi, rev)],
+        ['grp', 'Total Income', rev + oi, pct(rev + oi, rev)],
 
-        ['grp2', 'Direct Expenses',                   -totalDirect,     pct(totalDirect, rev)],
-        s_hosting     !== 0 && ['sub2', 'Hosting Charges',          -s_hosting,     pct(s_hosting, rev)],
-        s_site        !== 0 && ['sub2', 'Site Expenses',             -s_site,        pct(s_site, rev)],
-        s_otherDirect !== 0 && ['sub2', 'Other Direct Expenses',    -s_otherDirect, pct(s_otherDirect, rev)],
-        s_rent        !== 0 && ['sub2', 'Rent',                      -s_rent,        pct(s_rent, rev)],
+        ['grp2', 'Direct Expenses', -totalDirect, pct(totalDirect, rev)],
+        s_hosting !== 0 && ['sub2', 'Hosting Charges', -s_hosting, pct(s_hosting, rev)],
+        s_site !== 0 && ['sub2', 'Site Expenses', -s_site, pct(s_site, rev)],
+        s_otherDirect !== 0 && ['sub2', 'Other Direct Expenses', -s_otherDirect, pct(s_otherDirect, rev)],
+        s_rent !== 0 && ['sub2', 'Rent', -s_rent, pct(s_rent, rev)],
 
-        ['grp2', 'Indirect Expenses',                 -totalIndirect,   pct(totalIndirect, rev)],
-        s_director    !== 0 && ['sub2', "Director's Remuneration",   -s_director,    pct(s_director, rev)],
-        s_gst         !== 0 && ['sub2', 'Rates & Taxes (GST Expense)', -s_gst,       pct(s_gst, rev)],
-        s_empBenefit  !== 0 && ['sub2', 'Employee Benefit Expenses', -s_empBenefit,  pct(s_empBenefit, rev)],
-        s_powerFuel   !== 0 && ['sub2', 'Power & Fuel Expenses',     -s_powerFuel,   pct(s_powerFuel, rev)],
-        s_otherInd    !== 0 && ['sub2', 'Other Indirect Expenses',   -s_otherInd,    pct(s_otherInd, rev)],
+        ['grp2', 'Indirect Expenses', -totalIndirect, pct(totalIndirect, rev)],
+        s_director !== 0 && ['sub2', "Director's Remuneration", -s_director, pct(s_director, rev)],
+        s_gst !== 0 && ['sub2', 'Rates & Taxes (GST Expense)', -s_gst, pct(s_gst, rev)],
+        s_empBenefit !== 0 && ['sub2', 'Employee Benefit Expenses', -s_empBenefit, pct(s_empBenefit, rev)],
+        s_powerFuel !== 0 && ['sub2', 'Power & Fuel Expenses', -s_powerFuel, pct(s_powerFuel, rev)],
+        s_otherInd !== 0 && ['sub2', 'Other Indirect Expenses', -s_otherInd, pct(s_otherInd, rev)],
 
-        ['grp',  'EBITDA',                            eb2,              pct(eb2, rev)],
-        fc  !== 0 && ['sub',  'Finance Cost',          -fc,              pct(fc, rev)],
-        dep !== 0 && ['sub',  'Depreciation & Amortisation', -dep,      pct(dep, rev)],
-        ['tot',  'Profit Before Tax',                  p,                pct(p, rev)],
+        ['grp', 'EBITDA', eb2, pct(eb2, rev)],
+        fc !== 0 && ['sub', 'Finance Cost', -fc, pct(fc, rev)],
+        dep !== 0 && ['sub', 'Depreciation & Amortisation', -dep, pct(dep, rev)],
+        ['tot', 'Profit Before Tax', p, pct(p, rev)],
       ].filter(Boolean);
 
       document.querySelector('#pnlTbl tbody').innerHTML = rows.map(([cls, lbl, amt, pc]) =>
@@ -2138,20 +2354,20 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     function renderBs() {
       const ms = activeMonths(); const lastM = ms[ms.length - 1];
       const ppe = bsClose(l => l.cat === 'Fixed Assets');
-      const ca  = bsClose(l => l.cat === 'Current Assets');
+      const ca = bsClose(l => l.cat === 'Current Assets');
       const nca = bsClose(l => l.cat === 'Investments');    // TALLY_MAPPING uses 'Investments' (Sweep FD, Investment in Shares)
-      const oa  = bsClose(l => l.cat === 'Misc Expenses');  // TALLY_MAPPING uses 'Misc Expenses' (Preliminary Expenses)
+      const oa = bsClose(l => l.cat === 'Misc Expenses');  // TALLY_MAPPING uses 'Misc Expenses' (Preliminary Expenses)
       const totAssets = ppe + ca + nca + oa;
       const cyProfit = cumPnlProfitTo(lastM);
       // bsClose() with sign=-1 already returns positive values for Cr-balance liabilities/equity
       // (vals stored negative from parseClosingBalance, * sign=-1 = positive)
-      const share      = bsClose(l => l.cat === 'Equity' && l.sub === 'Share Capital');
-      const reserves   = bsClose(l => l.cat === 'Equity' && l.sub !== 'Share Capital'); // Reserves & other equity items
+      const share = bsClose(l => l.cat === 'Equity' && l.sub === 'Share Capital');
+      const reserves = bsClose(l => l.cat === 'Equity' && l.sub !== 'Share Capital'); // Reserves & other equity items
       const otherEquity = reserves + cyProfit;
-      const eq         = share + otherEquity;
-      const ncl        = bsClose(l => l.cat === 'Non-Current Liabilities');
-      const cl         = bsClose(l => l.cat === 'Current Liabilities');
-      const totEL      = eq + ncl + cl;
+      const eq = share + otherEquity;
+      const ncl = bsClose(l => l.cat === 'Non-Current Liabilities');
+      const cl = bsClose(l => l.cat === 'Current Liabilities');
+      const totEL = eq + ncl + cl;
       document.getElementById('bsKpis').innerHTML = kpiHTML([
         { l: 'Total Assets', v: fmtCr(totAssets), n: 'as at ' + periodLabel() },
         { l: 'Net Worth', v: fmtCr(eq), n: 'share capital + other equity' },
@@ -2239,48 +2455,54 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
         bar('Liquidity (Current Ratio)', cr.toFixed(2) + 'x', cr >= 1.5 ? 'comfortable short-term cover' : cr >= 1 ? 'adequate cover' : 'tight — watch payables', '#b8902f', cr / 2 * 100);
     }
 
-    function renderTax(){
-  const ms=activeMonths(); const rev=revenue();
-  const gx=gstExp();              // GST charged to P&L (the only tax IN the P&L)
-  const p=pbt();
-  const depTB=deprec();
-  const depIT=depItMonthly()*ms.length;
-  const taxable=p+depTB-depIT;    // taxable profit
-  const tx=Math.max(0,taxable)*taxRate;  // income tax (NOT in P&L)
-  const effRate=rev?tx/rev*100:0;
-  document.getElementById('taxKpis').innerHTML=kpiHTML([
-    {l:'GST Charged to P&L',v:fmtCr(gx),n:pct(gx,rev)+' of revenue · in P&L'},
-    {l:'Income Tax',v:fmtCr(tx),n:'on taxable profit · not in P&L'},
-    {l:'Effective Tax Rate',v:effRate.toFixed(2)+'%',n:'income tax ÷ revenue'},
-    {l:'Taxable Profit',v:fmtCr(taxable),n:depIT>0?'after IT depreciation':'PBT (no IT dep yet)'},
-  ]);
-  // Income Tax Computation table
-  document.getElementById('taxCompTbl').innerHTML=[
-    ['Profit Before Tax (per books)',p,''],
-    ['Add: Depreciation as per Books',depTB,'sub'],
-    ['Less: Depreciation as per Income Tax',-depIT,'sub'],
-    ['Taxable Profit',taxable,'grp'],
-    ['Income Tax @ '+(taxRate*100).toFixed(3)+'%',tx,'grp'],
-    ['Net Profit (PBT − Income Tax)',p-tx,'tot'],
-  ].map(([l,v,c])=>`<tr class="${c}"><td>${l}</td><td class="${v<0?'neg':''}" style="text-align:right;font-variant-numeric:tabular-nums">${fmt(v)}</td></tr>`).join('');
-  document.getElementById('taxTblCap').textContent='Period: '+periodLabel();
-  baseChart();
-  destroyChart('taxDonut');
-  charts.taxDonut=new Chart(document.getElementById('taxDonut'),{type:'doughnut',
-    data:{labels:['GST Expense (in P&L)','Income Tax (not in P&L)'],datasets:[{data:[gx,tx],backgroundColor:['#e07a5f','#5b9bd5'],borderColor:'#fff',borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:8}},
-      tooltip:{callbacks:{label:x=>x.label+': '+fmt(x.raw)+' ('+pct(x.raw,gx+tx)+')'}}}}});
-  const rows=[
-    ['grp','TAX CHARGED TO P&L','',''],
-    ['sub','GST Expense (Rates & Taxes — RCM / blocked ITC / late fees)',gx,pct(gx,rev)],
-    ['gtot','Total Tax in P&L',gx,pct(gx,rev)],
-    ['grp','INCOME TAX (not charged to P&L)','',''],
-    ['sub','Income Tax @ '+(taxRate*100).toFixed(3)+'% on taxable profit',tx,pct(tx,rev)],
-    ['gtot','Total Income Tax',tx,pct(tx,rev)],
-  ];
-  document.querySelector('#taxTbl tbody').innerHTML=rows.map(([cls,lbl,amt,pc])=>
-    `<tr class="${cls==='gtot'?'tot':cls}"><td>${lbl}</td><td>${amt===''?'':fmt(amt)}</td><td>${pc||''}</td></tr>`).join('');
-}
+    function renderTax() {
+      const ms = activeMonths(); const rev = revenue();
+      const gx = gstExp();              // GST charged to P&L (the only tax IN the P&L)
+      const p = pbt();
+      const depTB = deprec();
+      const depIT = depItMonthly() * ms.length;
+      const taxable = p + depTB - depIT;    // taxable profit
+      const tx = Math.max(0, taxable) * taxRate;  // income tax (NOT in P&L)
+      const effRate = rev ? tx / rev * 100 : 0;
+      document.getElementById('taxKpis').innerHTML = kpiHTML([
+        { l: 'GST Charged to P&L', v: fmtCr(gx), n: pct(gx, rev) + ' of revenue · in P&L' },
+        { l: 'Income Tax', v: fmtCr(tx), n: 'on taxable profit · not in P&L' },
+        { l: 'Effective Tax Rate', v: effRate.toFixed(2) + '%', n: 'income tax ÷ revenue' },
+        { l: 'Taxable Profit', v: fmtCr(taxable), n: depIT > 0 ? 'after IT depreciation' : 'PBT (no IT dep yet)' },
+      ]);
+      // Income Tax Computation table
+      document.getElementById('taxCompTbl').innerHTML = [
+        ['Profit Before Tax (per books)', p, ''],
+        ['Add: Depreciation as per Books', depTB, 'sub'],
+        ['Less: Depreciation as per Income Tax', -depIT, 'sub'],
+        ['Taxable Profit', taxable, 'grp'],
+        ['Income Tax @ ' + (taxRate * 100).toFixed(3) + '%', tx, 'grp'],
+        ['Net Profit (PBT − Income Tax)', p - tx, 'tot'],
+      ].map(([l, v, c]) => `<tr class="${c}"><td>${l}</td><td class="${v < 0 ? 'neg' : ''}" style="text-align:right;font-variant-numeric:tabular-nums">${fmt(v)}</td></tr>`).join('');
+      document.getElementById('taxTblCap').textContent = 'Period: ' + periodLabel();
+      baseChart();
+      destroyChart('taxDonut');
+      charts.taxDonut = new Chart(document.getElementById('taxDonut'), {
+        type: 'doughnut',
+        data: { labels: ['GST Expense (in P&L)', 'Income Tax (not in P&L)'], datasets: [{ data: [gx, tx], backgroundColor: ['#e07a5f', '#5b9bd5'], borderColor: '#fff', borderWidth: 3 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: {
+            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 8 } },
+            tooltip: { callbacks: { label: x => x.label + ': ' + fmt(x.raw) + ' (' + pct(x.raw, gx + tx) + ')' } }
+          }
+        }
+      });
+      const rows = [
+        ['grp', 'TAX CHARGED TO P&L', '', ''],
+        ['sub', 'GST Expense (Rates & Taxes — RCM / blocked ITC / late fees)', gx, pct(gx, rev)],
+        ['gtot', 'Total Tax in P&L', gx, pct(gx, rev)],
+        ['grp', 'INCOME TAX (not charged to P&L)', '', ''],
+        ['sub', 'Income Tax @ ' + (taxRate * 100).toFixed(3) + '% on taxable profit', tx, pct(tx, rev)],
+        ['gtot', 'Total Income Tax', tx, pct(tx, rev)],
+      ];
+      document.querySelector('#taxTbl tbody').innerHTML = rows.map(([cls, lbl, amt, pc]) =>
+        `<tr class="${cls === 'gtot' ? 'tot' : cls}"><td>${lbl}</td><td>${amt === '' ? '' : fmt(amt)}</td><td>${pc || ''}</td></tr>`).join('');
+    }
 
     function renderCost() {
       const ms = activeMonths(); const rev = revenue();
@@ -2302,10 +2524,10 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       let cum = 0, n80 = 0;
       for (const [, v] of ranked) { cum += v; n80++; if (cum >= 0.8 * totalCost) break; }
       document.getElementById('costKpis').innerHTML = kpiHTML([
-        { l: 'Total Cost',           v: fmtCr(totalCost), n: pct(totalCost, rev) + ' of revenue' },
+        { l: 'Total Cost', v: fmtCr(totalCost), n: pct(totalCost, rev) + ' of revenue' },
         { l: 'Cost per ₹ of Revenue', v: '₹' + (totalCost / (rev || 1)).toFixed(2), n: 'lower is better' },
-        { l: 'Largest Cost',         v: ranked[0] ? ranked[0][0] : '-', n: ranked[0] ? pct(ranked[0][1], totalCost) + ' of cost' : '' },
-        { l: '80% of Cost in',       v: n80 + ' head' + (n80 > 1 ? 's' : ''), n: 'of ' + ranked.length + ' total' },
+        { l: 'Largest Cost', v: ranked[0] ? ranked[0][0] : '-', n: ranked[0] ? pct(ranked[0][1], totalCost) + ' of cost' : '' },
+        { l: '80% of Cost in', v: n80 + ' head' + (n80 > 1 ? 's' : ''), n: 'of ' + ranked.length + ' total' },
       ]);
       document.getElementById('costRankCap').textContent = 'Period: ' + periodLabel();
       document.getElementById('costTblCap').textContent = 'Period: ' + periodLabel() + ' · cumulative share highlights the vital few';
@@ -2320,8 +2542,8 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
         data: {
           labels: top.map(x => x[0]),
           datasets: [
-            { type: 'bar',  label: 'Cost',         data: top.map(x => fmtL(x[1])), backgroundColor: top.map((x, i) => COLORS[i % COLORS.length]), borderRadius: 6, maxBarThickness: 30, yAxisID: 'y',  order: 2 },
-            { type: 'line', label: 'Cumulative %',  data: cumPct, borderColor: '#2a4a6b', backgroundColor: 'rgba(42,74,107,.08)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#2a4a6b', tension: .3, yAxisID: 'y1', order: 1, fill: false }
+            { type: 'bar', label: 'Cost', data: top.map(x => fmtL(x[1])), backgroundColor: top.map((x, i) => COLORS[i % COLORS.length]), borderRadius: 6, maxBarThickness: 30, yAxisID: 'y', order: 2 },
+            { type: 'line', label: 'Cumulative %', data: cumPct, borderColor: '#2a4a6b', backgroundColor: 'rgba(42,74,107,.08)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#2a4a6b', tension: .3, yAxisID: 'y1', order: 1, fill: false }
           ]
         },
         options: {
@@ -2332,7 +2554,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxRotation: 55, minRotation: 35, font: { size: 9 } } },
-            y:  { grid: { color: GRID }, ticks: { callback: v => '₹' + v + 'L' }, title: { display: true, text: 'Cost (₹L)', font: { size: 10 } } },
+            y: { grid: { color: GRID }, ticks: { callback: v => '₹' + v + 'L' }, title: { display: true, text: 'Cost (₹L)', font: { size: 10 } } },
             y1: { position: 'right', min: 0, max: 100, grid: { display: false }, ticks: { callback: v => v + '%' }, title: { display: true, text: 'Cumulative %', font: { size: 10 } } }
           }
         }
@@ -2342,7 +2564,7 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       const top6 = ranked.slice(0, 6);
       const othersV = ranked.slice(6).reduce((s, [, v]) => s + v, 0);
       const dLabels = top6.map(x => x[0]).concat(othersV > 0 ? ['Other heads'] : []);
-      const dData   = top6.map(x => x[1]).concat(othersV > 0 ? [othersV] : []);
+      const dData = top6.map(x => x[1]).concat(othersV > 0 ? [othersV] : []);
       charts.costDonut = new Chart(document.getElementById('costDonut'), {
         type: 'doughnut',
         data: { labels: dLabels, datasets: [{ data: dData, backgroundColor: dLabels.map((x, i) => i < 6 ? COLORS[i % COLORS.length] : '#c9d2dc'), borderColor: '#fff', borderWidth: 3 }] },
@@ -2388,418 +2610,463 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     }
 
 
-    function renderOverview(){
-  const rev=revenue(),oi=otherInc(),te=totalExp(),p=pbt(),np=pat();
-  const ebitda = rev + oi - directExp() - empCost() - gstExp();
-  const lastM = periodLastMonth();
-  const ca = bsAtMonth(l => l.cat === 'Current Assets', lastM);
-  const cl = bsAtMonth(l => l.cat === 'Current Liabilities', lastM); // already positive (sign=-1 * Cr-val)
-  const cash=cashAt(lastM);
-  // Net worth: equity ledgers with sign:-1 already return positive values from bsAtMonth;
-  // do NOT negate — just add cumulative retained profit.
-  const eq = bsAtMonth(l => l.cat === 'Equity', lastM) + cumPBT(lastM);
-  const assets = bsAtMonth(l => l.cat === 'Fixed Assets', lastM) + ca;
-  document.getElementById('ovKpis').innerHTML=kpiHTML([
-    {l:'Total Revenue',v:fmtCr(rev),n:periodLabel()},
-    {l:'Net Profit',v:fmtCr(np),n:'margin '+pct(np,rev),cls:np>=0?'pos':'neg'},
-    {l:'Cash Balance',v:fmtCr(cash),n:'as at '+periodLabel()},
-    {l:'Net Worth',v:fmtCr(eq),n:'total assets '+fmtCr(assets)},
-  ]);
-  document.getElementById('ovTrendCap').textContent='Revenue, expenses & net profit by month (₹)';
-  document.getElementById('ovSnapCap').textContent='Period: '+periodLabel();
-  baseChart();
-  destroyChart('ovTrend');
-  charts.ovTrend=new Chart(document.getElementById('ovTrend'),{type:'bar',
-    data:{labels:DATA.months,datasets:[
-      {label:'Revenue',data:monthlySeries('revenue'),backgroundColor:'#3f7cbf',borderRadius:5,maxBarThickness:14},
-      {label:'Expenses',data:monthlySeries('expense'),backgroundColor:'#d65a3c',borderRadius:5,maxBarThickness:14},
-      {type:'line',label:'Net Profit',data:netProfitSeries(),borderColor:'#2f9488',backgroundColor:'#2f948833',borderWidth:2,tension:.35,pointRadius:0,fill:true}]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:10}},tooltip:{callbacks:{label:x=>x.dataset.label+': '+fmt(x.raw)}}},
-      scales:{x:{grid:{display:false}},y:{grid:{color:GRID},ticks:{callback:v=>'₹'+(v/1e5).toFixed(0)+'L'}}}}});
-  destroyChart('ovDonut');
-  const segs=[['Direct Expenses',directExp()],['Employee Cost',empCost()],['GST Expense',gstExp()],['Finance Cost',finCost()],['Depreciation',deprec()],['Net Profit',Math.max(0,np)]].filter(s=>s[1]>0);
-  charts.ovDonut=new Chart(document.getElementById('ovDonut'),{type:'doughnut',
-    data:{labels:segs.map(s=>s[0]),datasets:[{data:segs.map(s=>s[1]),backgroundColor:segs.map((s,i)=>i===segs.length-1&&s[0]==='Net Profit'?'#2f9488':COLORS[i%COLORS.length]),borderColor:'#fff',borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'56%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:6,font:{size:10}}},
-      tooltip:{callbacks:{label:x=>x.label+': '+fmt(x.raw)+' ('+pct(x.raw,rev)+')'}}}}});
-  const snap=[
-    ['Revenue',fmt(rev),'100%'],['EBITDA',fmt(ebitda),pct(ebitda,rev)],
-    ['PBT',fmt(p),pct(p,rev)],['Net Profit',fmt(np),pct(np,rev)],
-    ['Total Assets',fmt(assets),''],['Net Worth',fmt(eq),''],
-    ['Cash & Bank',fmt(cash),''],['Working Capital',fmt(ca-cl),'CR '+(cl?(ca/cl).toFixed(2):'-')+'x'],
-  ];
-  document.querySelector('#ovSnap tbody').innerHTML=snap.map(([l,v,p])=>`<tr><td>${l}</td><td>${v}</td><td>${p}</td></tr>`).join('');
-  const cr = cl ? ca / cl : 0;
-  const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
-  const de = eq ? ncl / eq : 0;
-  const nm = np / rev * 100;
-  const health=[
-    ['Profitability', np>0?'✓ Profitable':'✗ Loss', pct(np,rev)+' margin'],
-    ['Liquidity', cr>=1.5?'✓ Strong':cr>=1?'~ Adequate':'✗ Tight', cr.toFixed(2)+'x current'],
-    ['Leverage', de<=1?'✓ Low':de<=2?'~ Moderate':'✗ High', de.toFixed(2)+'x D/E'],
-    ['Cash Position', cash>0?'✓ Positive':'✗ Negative', fmtCr(cash)],
-  ];
-  document.querySelector('#ovHealth tbody').innerHTML=health.map(([l,s,v])=>{
-    const cls=s.startsWith('✓')?'pos':s.startsWith('✗')?'neg':'';
-    return `<tr><td>${l}</td><td class="${cls}">${s}</td><td>${v}</td></tr>`;}).join('');
-}
-    function renderRatios(){
-  const rev=revenue(),oi=otherInc(),np=pat(),p=pbt();
-  const gp = rev - catExp('Direct Cost'); // gross profit (direct cost only)
-  const ebitda = rev + oi - directExp() - empCost() - gstExp();
-  const lastM=periodLastMonth();
-  const fa=bsAtMonth(l=>l.cat==='Fixed Assets',lastM), ca=bsAtMonth(l=>l.cat==='Current Assets',lastM);
-  const assets=fa+ca;
-  // Liability and equity bsAtMonth already applies sign:-1 for credit-balance accounts → returns positive.
-  // Do NOT add an extra `-` negation.
-  const cl  = bsAtMonth(l => l.cat === 'Current Liabilities',     lastM);
-  const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
-  const eq  = bsAtMonth(l => l.cat === 'Equity',                   lastM) + cumPBT(lastM);
-  const inv=0; const cash=cashAt(lastM);
-  const rec=bsAtMonth(l=>l.sub==='Trade Receivables',lastM);
-  const pay=-bsAtMonth(l=>l.sub==='Trade Payables',lastM);
-  const cr=cl?ca/cl:0, qr=cl?(ca-inv)/cl:0, de=eq?ncl/eq:0, dassets=assets?ncl/assets*100:0;
-  const roe=eq?np/eq*100:0, roa=assets?np/assets*100:0;
-  // annualization factor for turnover ratios when not full year
-  const ms=activeMonths(); const annF=12/ms.length;
-  const recDays=rev?rec/(rev*annF)*365:0, payDays=(catExp('Direct Cost')+catExp('Other Expenses'))?pay/((catExp('Direct Cost')+catExp('Other Expenses'))*annF)*365:0;
-  document.getElementById('ratKpis').innerHTML=kpiHTML([
-    {l:'Net Margin',v:pct(np,rev),n:periodLabel()},
-    {l:'Return on Equity',v:roe.toFixed(1)+'%',n:'annualised'},
-    {l:'Current Ratio',v:cr.toFixed(2)+'x',n:cr>=1.5?'strong':cr>=1?'adequate':'tight'},
-    {l:'Debt–Equity',v:de.toFixed(2)+'x',n:de<=1?'low':de<=2?'moderate':'high'},
-  ]);
-  document.getElementById('ratMarginCap').textContent='Period: '+periodLabel();
-  document.getElementById('ratProfCap').textContent='Period: '+periodLabel();
-  document.getElementById('ratLiqCap').textContent='As at '+periodLabel();
-  baseChart();
-  // margins bar
-  destroyChart('ratMargin');
-  charts.ratMargin=new Chart(document.getElementById('ratMargin'),{type:'bar',
-    data:{labels:['Gross','EBITDA','PBT','Net'],datasets:[{data:[gp,ebitda,p,np].map(x=>+(x/rev*100).toFixed(1)),
-      backgroundColor:['#3f7cbf','#2f9488','#b8902f','#d65a3c'],borderRadius:8,maxBarThickness:50}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw+'% of revenue'}}},
-      scales:{x:{grid:{display:false}},y:{grid:{color:GRID},ticks:{callback:v=>v+'%'}}}}});
-  // liquidity/leverage trend across months
-  destroyChart('ratLiq');
-  const crSeries = DATA.months.map((_, m) => {
-    const a = bsAtMonth(l => l.cat === 'Current Assets', m);
-    const c = bsAtMonth(l => l.cat === 'Current Liabilities', m);
-    return c ? +(a / c).toFixed(2) : 0;
-  });
-  const deSeries = DATA.months.map((_, m) => {
-    const e = bsAtMonth(l => l.cat === 'Equity', m) + cumPBT(m);
-    const d = bsAtMonth(l => l.cat === 'Non-Current Liabilities', m);  // loans only
-    return e ? +(d / e).toFixed(2) : 0;
-  });
-  charts.ratLiq=new Chart(document.getElementById('ratLiq'),{type:'line',
-    data:{labels:DATA.months,datasets:[
-      {label:'Current Ratio',data:crSeries,borderColor:'#2f9488',backgroundColor:'#2f948833',tension:.35,borderWidth:2,pointRadius:0,fill:false},
-      {label:'Debt–Equity',data:deSeries,borderColor:'#d65a3c',backgroundColor:'#d65a3c33',tension:.35,borderWidth:2,pointRadius:0,fill:false}]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:10}},tooltip:{callbacks:{label:x=>x.dataset.label+': '+x.raw+'x'}}},
-      scales:{x:{grid:{display:false}},y:{grid:{color:GRID},ticks:{callback:v=>v+'x'}}}}});
-  const prof=[
-    ['Gross Margin',pct(gp,rev),'profit after direct cost'],
-    ['EBITDA Margin',pct(ebitda,rev),'operating cash profitability'],
-    ['Net Margin',pct(np,rev),'bottom-line profitability'],
-    ['Return on Equity',roe.toFixed(1)+'%','return to shareholders'],
-    ['Return on Assets',roa.toFixed(1)+'%','asset efficiency'],
-  ];
-  document.querySelector('#ratProfTbl tbody').innerHTML=prof.map(([l,v,d])=>`<tr><td>${l}</td><td>${v}</td><td style="color:var(--muted);font-size:11px">${d}</td></tr>`).join('');
-  const liq=[
-    ['Current Ratio',cr.toFixed(2)+'x','short-term solvency'],
-    ['Quick Ratio',qr.toFixed(2)+'x','liquidity ex-inventory'],
-    ['Debt–Equity',de.toFixed(2)+'x','financial leverage'],
-    ['Debt to Assets',dassets.toFixed(1)+'%','asset funding by debt'],
-    ['Receivable Days',Math.round(recDays)+' days','collection period'],
-    ['Payable Days',Math.round(payDays)+' days','credit from suppliers'],
-  ];
-  document.querySelector('#ratLiqTbl tbody').innerHTML=liq.map(([l,v,d])=>`<tr><td>${l}</td><td>${v}</td><td style="color:var(--muted);font-size:11px">${d}</td></tr>`).join('');
-}
-    function renderTrends(){
-  const revS=monthlySeries('revenue'), expS=monthlySeries('expense'), npS=netProfitSeries();
-  const fyRev=revS.reduce((a,b)=>a+b,0), fyNp=npS.reduce((a,b)=>a+b,0);
+    function renderOverview() {
+      const rev = revenue(), oi = otherInc(), te = totalExp(), p = pbt(), np = pat();
+      const ebitda = rev + oi - directExp() - empCost() - gstExp();
+      const lastM = periodLastMonth();
+      const ca = bsAtMonth(l => l.cat === 'Current Assets', lastM);
+      const cl = bsAtMonth(l => l.cat === 'Current Liabilities', lastM); // already positive (sign=-1 * Cr-val)
+      const cash = cashAt(lastM);
+      // Net worth: equity ledgers with sign:-1 already return positive values from bsAtMonth;
+      // do NOT negate — just add cumulative retained profit.
+      const eq = bsAtMonth(l => l.cat === 'Equity', lastM) + cumPBT(lastM);
+      const assets = bsAtMonth(l => l.cat === 'Fixed Assets', lastM) + ca;
+      document.getElementById('ovKpis').innerHTML = kpiHTML([
+        { l: 'Total Revenue', v: fmtCr(rev), n: periodLabel() },
+        { l: 'Net Profit', v: fmtCr(np), n: 'margin ' + pct(np, rev), cls: np >= 0 ? 'pos' : 'neg' },
+        { l: 'Cash Balance', v: fmtCr(cash), n: 'as at ' + periodLabel() },
+        { l: 'Net Worth', v: fmtCr(eq), n: 'total assets ' + fmtCr(assets) },
+      ]);
+      document.getElementById('ovTrendCap').textContent = 'Revenue, expenses & net profit by month (₹)';
+      document.getElementById('ovSnapCap').textContent = 'Period: ' + periodLabel();
+      baseChart();
+      destroyChart('ovTrend');
+      charts.ovTrend = new Chart(document.getElementById('ovTrend'), {
+        type: 'bar',
+        data: {
+          labels: DATA.months, datasets: [
+            { label: 'Revenue', data: monthlySeries('revenue'), backgroundColor: '#3f7cbf', borderRadius: 5, maxBarThickness: 14 },
+            { label: 'Expenses', data: monthlySeries('expense'), backgroundColor: '#d65a3c', borderRadius: 5, maxBarThickness: 14 },
+            { type: 'line', label: 'Net Profit', data: netProfitSeries(), borderColor: '#2f9488', backgroundColor: '#2f948833', borderWidth: 2, tension: .35, pointRadius: 0, fill: true }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 10 } }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + fmt(x.raw) } } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: GRID }, ticks: { callback: v => '₹' + (v / 1e5).toFixed(0) + 'L' } } }
+        }
+      });
+      destroyChart('ovDonut');
+      const segs = [['Direct Expenses', directExp()], ['Employee Cost', empCost()], ['GST Expense', gstExp()], ['Finance Cost', finCost()], ['Depreciation', deprec()], ['Net Profit', Math.max(0, np)]].filter(s => s[1] > 0);
+      charts.ovDonut = new Chart(document.getElementById('ovDonut'), {
+        type: 'doughnut',
+        data: { labels: segs.map(s => s[0]), datasets: [{ data: segs.map(s => s[1]), backgroundColor: segs.map((s, i) => i === segs.length - 1 && s[0] === 'Net Profit' ? '#2f9488' : COLORS[i % COLORS.length]), borderColor: '#fff', borderWidth: 3 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '56%', plugins: {
+            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 6, font: { size: 10 } } },
+            tooltip: { callbacks: { label: x => x.label + ': ' + fmt(x.raw) + ' (' + pct(x.raw, rev) + ')' } }
+          }
+        }
+      });
+      const snap = [
+        ['Revenue', fmt(rev), '100%'], ['EBITDA', fmt(ebitda), pct(ebitda, rev)],
+        ['PBT', fmt(p), pct(p, rev)], ['Net Profit', fmt(np), pct(np, rev)],
+        ['Total Assets', fmt(assets), ''], ['Net Worth', fmt(eq), ''],
+        ['Cash & Bank', fmt(cash), ''], ['Working Capital', fmt(ca - cl), 'CR ' + (cl ? (ca / cl).toFixed(2) : '-') + 'x'],
+      ];
+      document.querySelector('#ovSnap tbody').innerHTML = snap.map(([l, v, p]) => `<tr><td>${l}</td><td>${v}</td><td>${p}</td></tr>`).join('');
+      const cr = cl ? ca / cl : 0;
+      const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
+      const de = eq ? ncl / eq : 0;
+      const nm = np / rev * 100;
+      const health = [
+        ['Profitability', np > 0 ? '✓ Profitable' : '✗ Loss', pct(np, rev) + ' margin'],
+        ['Liquidity', cr >= 1.5 ? '✓ Strong' : cr >= 1 ? '~ Adequate' : '✗ Tight', cr.toFixed(2) + 'x current'],
+        ['Leverage', de <= 1 ? '✓ Low' : de <= 2 ? '~ Moderate' : '✗ High', de.toFixed(2) + 'x D/E'],
+        ['Cash Position', cash > 0 ? '✓ Positive' : '✗ Negative', fmtCr(cash)],
+      ];
+      document.querySelector('#ovHealth tbody').innerHTML = health.map(([l, s, v]) => {
+        const cls = s.startsWith('✓') ? 'pos' : s.startsWith('✗') ? 'neg' : '';
+        return `<tr><td>${l}</td><td class="${cls}">${s}</td><td>${v}</td></tr>`;
+      }).join('');
+    }
+    function renderRatios() {
+      const rev = revenue(), oi = otherInc(), np = pat(), p = pbt();
+      const gp = rev - catExp('Direct Cost'); // gross profit (direct cost only)
+      const ebitda = rev + oi - directExp() - empCost() - gstExp();
+      const lastM = periodLastMonth();
+      const fa = bsAtMonth(l => l.cat === 'Fixed Assets', lastM), ca = bsAtMonth(l => l.cat === 'Current Assets', lastM);
+      const assets = fa + ca;
+      // Liability and equity bsAtMonth already applies sign:-1 for credit-balance accounts → returns positive.
+      // Do NOT add an extra `-` negation.
+      const cl = bsAtMonth(l => l.cat === 'Current Liabilities', lastM);
+      const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
+      const eq = bsAtMonth(l => l.cat === 'Equity', lastM) + cumPBT(lastM);
+      const inv = 0; const cash = cashAt(lastM);
+      const rec = bsAtMonth(l => l.sub === 'Trade Receivables', lastM);
+      const pay = -bsAtMonth(l => l.sub === 'Trade Payables', lastM);
+      const cr = cl ? ca / cl : 0, qr = cl ? (ca - inv) / cl : 0, de = eq ? ncl / eq : 0, dassets = assets ? ncl / assets * 100 : 0;
+      const roe = eq ? np / eq * 100 : 0, roa = assets ? np / assets * 100 : 0;
+      // annualization factor for turnover ratios when not full year
+      const ms = activeMonths(); const annF = 12 / ms.length;
+      const recDays = rev ? rec / (rev * annF) * 365 : 0, payDays = (catExp('Direct Cost') + catExp('Other Expenses')) ? pay / ((catExp('Direct Cost') + catExp('Other Expenses')) * annF) * 365 : 0;
+      document.getElementById('ratKpis').innerHTML = kpiHTML([
+        { l: 'Net Margin', v: pct(np, rev), n: periodLabel() },
+        { l: 'Return on Equity', v: roe.toFixed(1) + '%', n: 'annualised' },
+        { l: 'Current Ratio', v: cr.toFixed(2) + 'x', n: cr >= 1.5 ? 'strong' : cr >= 1 ? 'adequate' : 'tight' },
+        { l: 'Debt–Equity', v: de.toFixed(2) + 'x', n: de <= 1 ? 'low' : de <= 2 ? 'moderate' : 'high' },
+      ]);
+      document.getElementById('ratMarginCap').textContent = 'Period: ' + periodLabel();
+      document.getElementById('ratProfCap').textContent = 'Period: ' + periodLabel();
+      document.getElementById('ratLiqCap').textContent = 'As at ' + periodLabel();
+      baseChart();
+      // margins bar
+      destroyChart('ratMargin');
+      charts.ratMargin = new Chart(document.getElementById('ratMargin'), {
+        type: 'bar',
+        data: {
+          labels: ['Gross', 'EBITDA', 'PBT', 'Net'], datasets: [{
+            data: [gp, ebitda, p, np].map(x => +(x / rev * 100).toFixed(1)),
+            backgroundColor: ['#3f7cbf', '#2f9488', '#b8902f', '#d65a3c'], borderRadius: 8, maxBarThickness: 50
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.raw + '% of revenue' } } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: GRID }, ticks: { callback: v => v + '%' } } }
+        }
+      });
+      // liquidity/leverage trend across months
+      destroyChart('ratLiq');
+      const crSeries = DATA.months.map((_, m) => {
+        const a = bsAtMonth(l => l.cat === 'Current Assets', m);
+        const c = bsAtMonth(l => l.cat === 'Current Liabilities', m);
+        return c ? +(a / c).toFixed(2) : 0;
+      });
+      const deSeries = DATA.months.map((_, m) => {
+        const e = bsAtMonth(l => l.cat === 'Equity', m) + cumPBT(m);
+        const d = bsAtMonth(l => l.cat === 'Non-Current Liabilities', m);  // loans only
+        return e ? +(d / e).toFixed(2) : 0;
+      });
+      charts.ratLiq = new Chart(document.getElementById('ratLiq'), {
+        type: 'line',
+        data: {
+          labels: DATA.months, datasets: [
+            { label: 'Current Ratio', data: crSeries, borderColor: '#2f9488', backgroundColor: '#2f948833', tension: .35, borderWidth: 2, pointRadius: 0, fill: false },
+            { label: 'Debt–Equity', data: deSeries, borderColor: '#d65a3c', backgroundColor: '#d65a3c33', tension: .35, borderWidth: 2, pointRadius: 0, fill: false }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 10 } }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw + 'x' } } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: GRID }, ticks: { callback: v => v + 'x' } } }
+        }
+      });
+      const prof = [
+        ['Gross Margin', pct(gp, rev), 'profit after direct cost'],
+        ['EBITDA Margin', pct(ebitda, rev), 'operating cash profitability'],
+        ['Net Margin', pct(np, rev), 'bottom-line profitability'],
+        ['Return on Equity', roe.toFixed(1) + '%', 'return to shareholders'],
+        ['Return on Assets', roa.toFixed(1) + '%', 'asset efficiency'],
+      ];
+      document.querySelector('#ratProfTbl tbody').innerHTML = prof.map(([l, v, d]) => `<tr><td>${l}</td><td>${v}</td><td style="color:var(--muted);font-size:11px">${d}</td></tr>`).join('');
+      const liq = [
+        ['Current Ratio', cr.toFixed(2) + 'x', 'short-term solvency'],
+        ['Quick Ratio', qr.toFixed(2) + 'x', 'liquidity ex-inventory'],
+        ['Debt–Equity', de.toFixed(2) + 'x', 'financial leverage'],
+        ['Debt to Assets', dassets.toFixed(1) + '%', 'asset funding by debt'],
+        ['Receivable Days', Math.round(recDays) + ' days', 'collection period'],
+        ['Payable Days', Math.round(payDays) + ' days', 'credit from suppliers'],
+      ];
+      document.querySelector('#ratLiqTbl tbody').innerHTML = liq.map(([l, v, d]) => `<tr><td>${l}</td><td>${v}</td><td style="color:var(--muted);font-size:11px">${d}</td></tr>`).join('');
+    }
+    function renderTrends() {
+      const revS = monthlySeries('revenue'), expS = monthlySeries('expense'), npS = netProfitSeries();
+      const fyRev = revS.reduce((a, b) => a + b, 0), fyNp = npS.reduce((a, b) => a + b, 0);
 
-  // Revenue Growth: compare first → last month that actually has data (revenue > 0)
-  // Avoids showing -100% when months without a TB uploaded have ₹0 revenue.
-  const activeIdxs = revS.map((v,i) => v > 0 ? i : -1).filter(i => i >= 0);
-  const hasGrowth  = activeIdxs.length >= 2;
-  const g = hasGrowth
-    ? ((revS[activeIdxs[activeIdxs.length-1]] - revS[activeIdxs[0]]) / revS[activeIdxs[0]] * 100)
-    : null;
-  const gLabel = hasGrowth
-    ? DATA.months[activeIdxs[0]] + ' → ' + DATA.months[activeIdxs[activeIdxs.length-1]]
-    : 'only 1 month loaded';
+      // Revenue Growth: compare first → last month that actually has data (revenue > 0)
+      // Avoids showing -100% when months without a TB uploaded have ₹0 revenue.
+      const activeIdxs = revS.map((v, i) => v > 0 ? i : -1).filter(i => i >= 0);
+      const hasGrowth = activeIdxs.length >= 2;
+      const g = hasGrowth
+        ? ((revS[activeIdxs[activeIdxs.length - 1]] - revS[activeIdxs[0]]) / revS[activeIdxs[0]] * 100)
+        : null;
+      const gLabel = hasGrowth
+        ? DATA.months[activeIdxs[0]] + ' → ' + DATA.months[activeIdxs[activeIdxs.length - 1]]
+        : 'only 1 month loaded';
 
-  const bestM=npS.indexOf(Math.max(...npS));
-  document.getElementById('trKpis').innerHTML=kpiHTML([
-    {l:'FY Revenue',v:fmtCr(fyRev),n:'all months'},
-    {l:'FY Net Profit',v:fmtCr(fyNp),n:'margin '+pct(fyNp,fyRev)},
-    {l:'Revenue Growth',v:g!==null?(g>=0?'+':'')+g.toFixed(1)+'%':'—',n:gLabel,cls:g!==null&&g>=0?'pos':g!==null?'neg':''},
-    {l:'Best Month',v:DATA.months[bestM],n:'profit '+fmt(npS[bestM])},
-  ]);
-  document.getElementById('trTblCap').textContent='Month-on-month, full year';
-  baseChart();
-  destroyChart('trMain');
-  charts.trMain=new Chart(document.getElementById('trMain'),{type:'line',
-    data:{labels:DATA.months,datasets:[
-      {label:'Revenue',data:revS,borderColor:'#3f7cbf',backgroundColor:'#3f7cbf22',tension:.35,borderWidth:2,pointRadius:2,fill:true},
-      {label:'Net Profit',data:npS,borderColor:'#2f9488',backgroundColor:'#2f948822',tension:.35,borderWidth:2,pointRadius:2,fill:true}]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{usePointStyle:true,boxWidth:8,padding:10}},tooltip:{callbacks:{label:x=>x.dataset.label+': '+fmt(x.raw)}}},
-      scales:{x:{grid:{display:false}},y:{grid:{color:GRID},ticks:{callback:v=>'₹'+(v/1e5).toFixed(0)+'L'}}}}});
-  destroyChart('trBridge');
-  // Profit bridge for the active period: Revenue - Direct - Indirect - Fin - Dep = Net Profit (floating bars)
-  const ms=activeMonths();
-  const sumCat=cats=>{let t=0;DATA.ledgers.forEach(l=>{if(l.stmt!=='P&L')return;if(cats.includes(l.cat))ms.forEach(m=>t+=(l.flow[m]||0)*l.sign);});return t;};
-  const pRev=-sumCat(['Revenue','Other Income']);
-  const pDirect=sumCat(['Direct Cost']);
-  const pEmp=sumCat(['Employee Cost']);
-  const pOps=sumCat(['Selling & Distribution','Admin & General','Utilities','Professional Fees','Rates & Taxes','Rent','Repairs & Maintenance','Travel','Other Expenses','GST Expense']);
-  const pFin=sumCat(['Finance Cost']);
-  const pDep=sumCat(['Depreciation']);
-  const pNet=pRev-pDirect-pEmp-pOps-pFin-pDep;
-  // floating bars: [start,end]
-  const steps=[['Revenue',0,pRev,'#5b9bd5'],['Direct',pRev-pDirect,pRev,'#e07a5f'],['Employee',pRev-pDirect-pEmp,pRev-pDirect,'#8a7cc8'],['Operating',pRev-pDirect-pEmp-pOps,pRev-pDirect-pEmp,'#c79a3e'],['Finance',pRev-pDirect-pEmp-pOps-pFin,pRev-pDirect-pEmp-pOps,'#d2674a'],['Deprec.',pNet,pRev-pDirect-pEmp-pOps-pFin,'#7cb87a'],['Net Profit',0,pNet,'#3aa99a']];
-  charts.trBridge=new Chart(document.getElementById('trBridge'),{type:'bar',
-    data:{labels:steps.map(s=>s[0]),datasets:[{data:steps.map(s=>[s[1]/1e5,s[2]/1e5]),backgroundColor:steps.map(s=>s[3]),borderRadius:5,maxBarThickness:46}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:x=>{const s=steps[x.dataIndex];return s[0]+': ₹'+(Math.abs(s[2]-s[1])/1e5).toFixed(1)+'L';}}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:GRID},ticks:{callback:v=>'₹'+v+'L'},title:{display:true,text:'₹ Lakh',font:{size:10}}}}}});
-  document.querySelector('#trTbl tbody').innerHTML = DATA.months.map((mn, i) => {
-    // Show growth only when BOTH this month and the prior month have real data (non-zero revenue).
-    // April (i=0) is the FY start — always show '-'. Months with no TB uploaded (rev=0) show '-'.
-    const growth = (i > 0 && revS[i - 1] > 0 && revS[i] > 0)
-      ? ((revS[i] - revS[i - 1]) / revS[i - 1] * 100)
-      : null;
-    const gtxt = growth === null ? '-' : (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
-    const gcls = growth === null ? '' : growth >= 0 ? 'pos' : 'neg';
-    return `<tr><td>${mn}</td><td>${fmt(revS[i])}</td><td>${fmt(expS[i])}</td><td class="${npS[i] < 0 ? 'neg' : ''}">${fmt(npS[i])}</td><td>${pct(npS[i], revS[i])}</td><td class="${gcls}">${gtxt}</td></tr>`;
-  }).join('');
-}
-    async function renderProperties(){
-  // Auto-load from DB on first visit if no data is in memory
-  if (PROPERTIES.length === 0) await loadPropertiesFromDb();
-  const P=PROPERTIES;
-  const totRent=P.reduce((s,p)=>s+curRent(p),0);
-  const totDep=P.reduce((s,p)=>s+(p.deposit||0),0);
-  const totFinal=P.reduce((s,p)=>s+finalRent(p),0);
-  const pins=[...new Set(P.map(p=>p.pin).filter(Boolean))];
-  document.getElementById('propKpis').innerHTML=kpiHTML([
-    {l:'Total Properties',v:String(P.length),n:'under management'},
-    {l:'Current Monthly Rent',v:fmtCr(totRent),n:'₹'+(totRent*12/1e7).toFixed(2)+' Cr annualised'},
-    {l:'Final-Year Monthly Rent',v:fmtCr(totFinal),n:'+'+(totRent?((totFinal-totRent)/totRent*100).toFixed(1):0)+'% over lease terms'},
-    {l:'Deposits Held',v:fmtCr(totDep),n:pins.length+' locations'},
-  ]);
-  // Area filter dropdown — rebuilt every render so it tracks the current dataset
-  const byArea={};
-  P.forEach(p=>{ const a=propArea(p); byArea[a]=(byArea[a]||0)+1; });
-  const areaRank=Object.entries(byArea).sort((a,b)=>b[1]-a[1]);
-  const sel=document.getElementById('propArea2');
-  const prev=sel.value;   // preserve selection across re-renders
-  sel.innerHTML='<option value="">All areas</option>'+
-    areaRank.map(([a,c])=>`<option value="${a}">${a} (${c})</option>`).join('');
-  if(prev && byArea[prev]) sel.value=prev;  // restore if still valid
-  drawPropTable();
-  if(!propInit){ wirePropControls(); propInit=true; }
-}
-    function drawPropTable(){
-  const P=PROPERTIES;
-  const q=(document.getElementById('propSearch').value||'').toLowerCase().trim();
-  const area=document.getElementById('propArea2').value;
-  let rows=P.map((p,i)=>({...p,idx:i+1,rent:curRent(p),esc:escPct(p),_area:propArea(p)}));
-  if(q) rows=rows.filter(p=>(p.tenant+' '+p.building+' '+p.location+' '+p.pin+' '+p._area+' '+p.file).toLowerCase().includes(q));
-  if(area) rows=rows.filter(p=>p._area===area);
-  const k=propSort.key, dir=propSort.dir;
-  rows.sort((a,b)=>{ let x,y;
-    if(k==='from'||k==='to'){ x=propDateKey(a[k]); y=propDateKey(b[k]); return dir*(x-y); }
-    x=a[k]; y=b[k];
-    if(typeof x==='string'){ return dir*x.localeCompare(y); }
-    return dir*((x||0)-(y||0)); });
-  document.getElementById('propTblCap').textContent=rows.length+' of '+P.length+' properties'+(q||area?' (filtered)':'')+' · sorted by '+({from:'lease start',to:'lease expiry',building:'property',tenant:'tenant',pin:'pincode',deposit:'deposit',rent:'current rent',esc:'increase'}[k]||k);
-  const tb=document.querySelector('#propTbl tbody');
-  const rcell=v=> v? `<td style="font-variant-numeric:tabular-nums">${fmt(v)}</td>` : '<td style="color:#cbd5e0">·</td>';
-  tb.innerHTML=rows.map(p=>{
-    const esc=p.esc>0?`<span class="pill norm">+${p.esc.toFixed(0)}%</span>`:'<span style="color:var(--muted)">—</span>';
-    const rs=p.rents||[];
-    return `<tr>
+      const bestM = npS.indexOf(Math.max(...npS));
+      document.getElementById('trKpis').innerHTML = kpiHTML([
+        { l: 'FY Revenue', v: fmtCr(fyRev), n: 'all months' },
+        { l: 'FY Net Profit', v: fmtCr(fyNp), n: 'margin ' + pct(fyNp, fyRev) },
+        { l: 'Revenue Growth', v: g !== null ? (g >= 0 ? '+' : '') + g.toFixed(1) + '%' : '—', n: gLabel, cls: g !== null && g >= 0 ? 'pos' : g !== null ? 'neg' : '' },
+        { l: 'Best Month', v: DATA.months[bestM], n: 'profit ' + fmt(npS[bestM]) },
+      ]);
+      document.getElementById('trTblCap').textContent = 'Month-on-month, full year';
+      baseChart();
+      destroyChart('trMain');
+      charts.trMain = new Chart(document.getElementById('trMain'), {
+        type: 'line',
+        data: {
+          labels: DATA.months, datasets: [
+            { label: 'Revenue', data: revS, borderColor: '#3f7cbf', backgroundColor: '#3f7cbf22', tension: .35, borderWidth: 2, pointRadius: 2, fill: true },
+            { label: 'Net Profit', data: npS, borderColor: '#2f9488', backgroundColor: '#2f948822', tension: .35, borderWidth: 2, pointRadius: 2, fill: true }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, padding: 10 } }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + fmt(x.raw) } } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: GRID }, ticks: { callback: v => '₹' + (v / 1e5).toFixed(0) + 'L' } } }
+        }
+      });
+      destroyChart('trBridge');
+      // Profit bridge for the active period: Revenue - Direct - Indirect - Fin - Dep = Net Profit (floating bars)
+      const ms = activeMonths();
+      const sumCat = cats => { let t = 0; DATA.ledgers.forEach(l => { if (l.stmt !== 'P&L') return; if (cats.includes(l.cat)) ms.forEach(m => t += (l.flow[m] || 0) * l.sign); }); return t; };
+      const pRev = -sumCat(['Revenue', 'Other Income']);
+      const pDirect = sumCat(['Direct Cost']);
+      const pEmp = sumCat(['Employee Cost']);
+      const pOps = sumCat(['Selling & Distribution', 'Admin & General', 'Utilities', 'Professional Fees', 'Rates & Taxes', 'Rent', 'Repairs & Maintenance', 'Travel', 'Other Expenses', 'GST Expense']);
+      const pFin = sumCat(['Finance Cost']);
+      const pDep = sumCat(['Depreciation']);
+      const pNet = pRev - pDirect - pEmp - pOps - pFin - pDep;
+      // floating bars: [start,end]
+      const steps = [['Revenue', 0, pRev, '#5b9bd5'], ['Direct', pRev - pDirect, pRev, '#e07a5f'], ['Employee', pRev - pDirect - pEmp, pRev - pDirect, '#8a7cc8'], ['Operating', pRev - pDirect - pEmp - pOps, pRev - pDirect - pEmp, '#c79a3e'], ['Finance', pRev - pDirect - pEmp - pOps - pFin, pRev - pDirect - pEmp - pOps, '#d2674a'], ['Deprec.', pNet, pRev - pDirect - pEmp - pOps - pFin, '#7cb87a'], ['Net Profit', 0, pNet, '#3aa99a']];
+      charts.trBridge = new Chart(document.getElementById('trBridge'), {
+        type: 'bar',
+        data: { labels: steps.map(s => s[0]), datasets: [{ data: steps.map(s => [s[1] / 1e5, s[2] / 1e5]), backgroundColor: steps.map(s => s[3]), borderRadius: 5, maxBarThickness: 46 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: x => { const s = steps[x.dataIndex]; return s[0] + ': ₹' + (Math.abs(s[2] - s[1]) / 1e5).toFixed(1) + 'L'; } } }
+          },
+          scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { grid: { color: GRID }, ticks: { callback: v => '₹' + v + 'L' }, title: { display: true, text: '₹ Lakh', font: { size: 10 } } } }
+        }
+      });
+      document.querySelector('#trTbl tbody').innerHTML = DATA.months.map((mn, i) => {
+        // Show growth only when BOTH this month and the prior month have real data (non-zero revenue).
+        // April (i=0) is the FY start — always show '-'. Months with no TB uploaded (rev=0) show '-'.
+        const growth = (i > 0 && revS[i - 1] > 0 && revS[i] > 0)
+          ? ((revS[i] - revS[i - 1]) / revS[i - 1] * 100)
+          : null;
+        const gtxt = growth === null ? '-' : (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
+        const gcls = growth === null ? '' : growth >= 0 ? 'pos' : 'neg';
+        return `<tr><td>${mn}</td><td>${fmt(revS[i])}</td><td>${fmt(expS[i])}</td><td class="${npS[i] < 0 ? 'neg' : ''}">${fmt(npS[i])}</td><td>${pct(npS[i], revS[i])}</td><td class="${gcls}">${gtxt}</td></tr>`;
+      }).join('');
+    }
+    async function renderProperties() {
+      // Auto-load from DB on first visit if no data is in memory
+      if (PROPERTIES.length === 0) await loadPropertiesFromDb();
+      const P = PROPERTIES;
+      const totRent = P.reduce((s, p) => s + curRent(p), 0);
+      const totDep = P.reduce((s, p) => s + (p.deposit || 0), 0);
+      const totFinal = P.reduce((s, p) => s + finalRent(p), 0);
+      const pins = [...new Set(P.map(p => p.pin).filter(Boolean))];
+      document.getElementById('propKpis').innerHTML = kpiHTML([
+        { l: 'Total Properties', v: String(P.length), n: 'under management' },
+        { l: 'Current Monthly Rent', v: fmtCr(totRent), n: '₹' + (totRent * 12 / 1e7).toFixed(2) + ' Cr annualised' },
+        { l: 'Final-Year Monthly Rent', v: fmtCr(totFinal), n: '+' + (totRent ? ((totFinal - totRent) / totRent * 100).toFixed(1) : 0) + '% over lease terms' },
+        { l: 'Deposits Held', v: fmtCr(totDep), n: pins.length + ' locations' },
+      ]);
+      // Area filter dropdown — rebuilt every render so it tracks the current dataset
+      const byArea = {};
+      P.forEach(p => { const a = propArea(p); byArea[a] = (byArea[a] || 0) + 1; });
+      const areaRank = Object.entries(byArea).sort((a, b) => b[1] - a[1]);
+      const sel = document.getElementById('propArea2');
+      const prev = sel.value;   // preserve selection across re-renders
+      sel.innerHTML = '<option value="">All areas</option>' +
+        areaRank.map(([a, c]) => `<option value="${a}">${a} (${c})</option>`).join('');
+      if (prev && byArea[prev]) sel.value = prev;  // restore if still valid
+      drawPropTable();
+      if (!propInit) { wirePropControls(); propInit = true; }
+    }
+    function drawPropTable() {
+      const P = PROPERTIES;
+      const q = (document.getElementById('propSearch').value || '').toLowerCase().trim();
+      const area = document.getElementById('propArea2').value;
+      let rows = P.map((p, i) => ({ ...p, idx: i + 1, rent: curRent(p), esc: escPct(p), _area: propArea(p) }));
+      if (q) rows = rows.filter(p => (p.tenant + ' ' + p.building + ' ' + p.location + ' ' + p.pin + ' ' + p._area + ' ' + p.file).toLowerCase().includes(q));
+      if (area) rows = rows.filter(p => p._area === area);
+      const k = propSort.key, dir = propSort.dir;
+      rows.sort((a, b) => {
+        let x, y;
+        if (k === 'from' || k === 'to') { x = propDateKey(a[k]); y = propDateKey(b[k]); return dir * (x - y); }
+        x = a[k]; y = b[k];
+        if (typeof x === 'string') { return dir * x.localeCompare(y); }
+        return dir * ((x || 0) - (y || 0));
+      });
+      document.getElementById('propTblCap').textContent = rows.length + ' of ' + P.length + ' properties' + (q || area ? ' (filtered)' : '') + ' · sorted by ' + ({ from: 'lease start', to: 'lease expiry', building: 'property', tenant: 'tenant', pin: 'pincode', deposit: 'deposit', rent: 'current rent', esc: 'increase' }[k] || k);
+      const tb = document.querySelector('#propTbl tbody');
+      const rcell = v => v ? `<td style="font-variant-numeric:tabular-nums">${fmt(v)}</td>` : '<td style="color:#cbd5e0">·</td>';
+      tb.innerHTML = rows.map(p => {
+        const esc = p.esc > 0 ? `<span class="pill norm">+${p.esc.toFixed(0)}%</span>` : '<span style="color:var(--muted)">—</span>';
+        const rs = p.rents || [];
+        return `<tr>
       <td style="color:var(--muted)">${p.idx}</td>
-      <td style="text-align:left;font-weight:600" title="${esc_html(p.location)}">${esc_html(p.building||p.location)}</td>
-      <td>${p.pin||'—'}</td>
+      <td style="text-align:left;font-weight:600" title="${esc_html(p.location)}">${esc_html(p.building || p.location)}</td>
+      <td>${p.pin || '—'}</td>
       <td style="text-align:left;color:var(--muted)">${esc_html(p.tenant)}</td>
-      <td>${p.from||'—'}</td>
-      <td>${p.to||'—'}</td>
+      <td>${p.from || '—'}</td>
+      <td>${p.to || '—'}</td>
       <td>${fmt(p.deposit)}</td>
-      <td style="font-weight:600;color:var(--navy)">${rs[0]?fmt(rs[0]):'·'}</td>
+      <td style="font-weight:600;color:var(--navy)">${rs[0] ? fmt(rs[0]) : '·'}</td>
       ${rcell(rs[1])}${rcell(rs[2])}${rcell(rs[3])}${rcell(rs[4])}
       <td>${esc}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:24px">No properties match your search</td></tr>';
-}
-    function wirePropControls(){
-  document.getElementById('propSearch').addEventListener('input',drawPropTable);
-  document.getElementById('propArea2').addEventListener('change',drawPropTable);
-  document.querySelectorAll('#propTbl thead th[data-sort]').forEach(th=>{
-    th.addEventListener('click',()=>{ const k=th.dataset.sort;
-      if(propSort.key===k) propSort.dir*=-1; else { propSort.key=k; propSort.dir=(k==='tenant'||k==='building'||k==='pin'||k==='from'||k==='to')?1:-1; }
-      drawPropTable(); });
-  });
-  document.getElementById('propExport').addEventListener('click',()=>{
-    const q=(document.getElementById('propSearch').value||'').toLowerCase().trim();
-    const area=document.getElementById('propArea2').value;
-    let rows=PROPERTIES.map(p=>({...p,rent:curRent(p),esc:escPct(p)}));
-    if(q) rows=rows.filter(p=>(p.tenant+' '+p.building+' '+p.location+' '+p.pin).toLowerCase().includes(q));
-    if(area) rows=rows.filter(p=>p.pin===area);
-    rows.sort((a,b)=>propDateKey(a.from)-propDateKey(b.from));
-    const hdr=['Property','Location','Pincode','Tenant','Period From','Period To','Deposit','Rent Yr1','Rent Yr2','Rent Yr3','Rent Yr4','Rent Yr5','Total Increase %'];
-    const csv=[hdr.join(',')].concat(rows.map(p=>{ const r=p.rents||[];
-      return [p.building,p.location,p.pin,p.tenant,p.from,p.to,p.deposit,r[0]||'',r[1]||'',r[2]||'',r[3]||'',r[4]||'',p.esc?p.esc.toFixed(1):'']
-        .map(v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`).join(','); })).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download='OSI_Property_Database.csv'; a.click(); URL.revokeObjectURL(url);
-  });
-}
-    function esc_html(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-/* ── Properties: banner helper ─────────────────────────────── */
-function propShowBanner(type, msg) {
-  const el = document.getElementById('propBanner');
-  if (!el) return;
-  const STYLES = {
-    info: 'background:rgba(63,124,191,.08);border:1px solid rgba(63,124,191,.2);color:#3f7cbf',
-    ok:   'background:rgba(47,148,136,.08);border:1px solid rgba(47,148,136,.2);color:#2f9488',
-    err:  'background:rgba(214,90,60,.08);border:1px solid rgba(214,90,60,.2);color:#c04a30',
-  };
-  el.style.cssText = (el.style.cssText.split(';')[0] || '') +
-    `;margin-bottom:12px;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:600;display:flex;${STYLES[type]||STYLES.info}`;
-  el.textContent = msg;
-}
-
-/* ── Contract Tracker parser ───────────────────────────────── */
-function parseContractTracker(bytes) {
-  const wb = XLSX.read(bytes, { type: 'array', cellDates: false });
-  const sheet = wb.Sheets['Contracts'] || wb.Sheets[wb.SheetNames[0]];
-  if (!sheet) throw new Error('Sheet "Contracts" not found in file.');
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
-  if (rows.length < 2) throw new Error('No data rows found in Contracts sheet.');
-
-  const parseNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; };
-
-  return rows.slice(1).map(row => {
-    // Skip blank rows
-    if (!row[0] && !row[1]) return null;
-
-    const location = String(row[2] || '').trim();
-    const pinMatch = location.match(/\b(\d{6})\b/);
-    const pin = pinMatch ? pinMatch[1] : '';
-
-    // Building = first 2 meaningful comma-separated parts of location
-    const locParts = location.split(',').map(s => s.trim()).filter(Boolean);
-    const building = locParts.slice(0, Math.min(2, locParts.length - 1)).join(', ') ||
-                     location.replace(/,?\s*\d{6}\s*$/, '').trim().substring(0, 60);
-
-    const rents = [row[7], row[8], row[9], row[10], row[11]]
-      .map(v => parseNum(v))
-      .filter(v => v > 0);
-
-    return {
-      file:     String(row[0] || '').trim(),
-      tenant:   String(row[1] || '').trim(),
-      location: location,
-      building: building || location.substring(0, 60),
-      pin:      pin,
-      from:     String(row[3] || '').trim(),
-      to:       String(row[4] || '').trim(),
-      deposit:  parseNum(row[5]),
-      rents:    rents,
-    };
-  }).filter(Boolean);
-}
-
-/* ── Save PROPERTIES to Supabase ───────────────────────────── */
-async function savePropertiesToDb() {
-  const sb = getSupabase();
-  // Clear existing rows for a clean sync
-  const { error: delErr } = await sb.from('properties').delete().neq('id', 0);
-  if (delErr) throw new Error(delErr.message);
-
-  // Batch insert (Supabase handles up to 1000 rows per insert)
-  const rows = PROPERTIES.map(p => ({
-    file_name:   p.file     || null,
-    tenant_name: p.tenant   || null,
-    location:    p.location || null,
-    building:    p.building || null,
-    pincode:     p.pin      || null,
-    period_from: p.from     || null,
-    period_to:   p.to       || null,
-    deposit:     p.deposit  || 0,
-    rent_yr1:    (p.rents && p.rents[0]) || null,
-    rent_yr2:    (p.rents && p.rents[1]) || null,
-    rent_yr3:    (p.rents && p.rents[2]) || null,
-    rent_yr4:    (p.rents && p.rents[3]) || null,
-    rent_yr5:    (p.rents && p.rents[4]) || null,
-  }));
-
-  // Insert in chunks of 500 to stay well within limits
-  const CHUNK = 500;
-  for (let i = 0; i < rows.length; i += CHUNK) {
-    const { error } = await sb.from('properties').insert(rows.slice(i, i + CHUNK));
-    if (error) throw new Error(error.message);
-  }
-}
-
-/* ── Load PROPERTIES from Supabase ────────────────────────── */
-let propDbLoaded = false;
-async function loadPropertiesFromDb() {
-  if (propDbLoaded) return;          // only auto-load once per session
-  try {
-    const sb = getSupabase();
-    const { data, error } = await sb
-      .from('properties')
-      .select('*')
-      .order('id', { ascending: true });
-    if (error || !data || data.length === 0) return;
-
-    PROPERTIES.length = 0;
-    data.forEach(r => {
-      const rents = [r.rent_yr1, r.rent_yr2, r.rent_yr3, r.rent_yr4, r.rent_yr5]
-        .map(v => parseFloat(v) || 0)
-        .filter(v => v > 0);
-      PROPERTIES.push({
-        file:     r.file_name   || '',
-        tenant:   r.tenant_name || '',
-        location: r.location    || '',
-        building: r.building    || '',
-        pin:      r.pincode     || '',
-        from:     r.period_from || '',
-        to:       r.period_to   || '',
-        deposit:  parseFloat(r.deposit) || 0,
-        rents:    rents,
+      }).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:24px">No properties match your search</td></tr>';
+    }
+    function wirePropControls() {
+      document.getElementById('propSearch').addEventListener('input', drawPropTable);
+      document.getElementById('propArea2').addEventListener('change', drawPropTable);
+      document.querySelectorAll('#propTbl thead th[data-sort]').forEach(th => {
+        th.addEventListener('click', () => {
+          const k = th.dataset.sort;
+          if (propSort.key === k) propSort.dir *= -1; else { propSort.key = k; propSort.dir = (k === 'tenant' || k === 'building' || k === 'pin' || k === 'from' || k === 'to') ? 1 : -1; }
+          drawPropTable();
+        });
       });
-    });
-    propDbLoaded = true;
+      document.getElementById('propExport').addEventListener('click', () => {
+        const q = (document.getElementById('propSearch').value || '').toLowerCase().trim();
+        const area = document.getElementById('propArea2').value;
+        let rows = PROPERTIES.map(p => ({ ...p, rent: curRent(p), esc: escPct(p) }));
+        if (q) rows = rows.filter(p => (p.tenant + ' ' + p.building + ' ' + p.location + ' ' + p.pin).toLowerCase().includes(q));
+        if (area) rows = rows.filter(p => p.pin === area);
+        rows.sort((a, b) => propDateKey(a.from) - propDateKey(b.from));
+        const hdr = ['Property', 'Location', 'Pincode', 'Tenant', 'Period From', 'Period To', 'Deposit', 'Rent Yr1', 'Rent Yr2', 'Rent Yr3', 'Rent Yr4', 'Rent Yr5', 'Total Increase %'];
+        const csv = [hdr.join(',')].concat(rows.map(p => {
+          const r = p.rents || [];
+          return [p.building, p.location, p.pin, p.tenant, p.from, p.to, p.deposit, r[0] || '', r[1] || '', r[2] || '', r[3] || '', r[4] || '', p.esc ? p.esc.toFixed(1) : '']
+            .map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(',');
+        })).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'OSI_Property_Database.csv'; a.click(); URL.revokeObjectURL(url);
+      });
+    }
+    function esc_html(s) { return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
-    // Show DB banner with record count and date
-    const lastUp = data[data.length - 1].created_at
-      ? new Date(data[data.length - 1].created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
-      : '—';
-    propShowBanner('ok', `☁️ ${data.length} properties loaded from cloud database · last updated ${lastUp}`);
-  } catch (_e) { /* Supabase unavailable — silently skip */ }
-}
+    /* ── Properties: banner helper ─────────────────────────────── */
+    function propShowBanner(type, msg) {
+      const el = document.getElementById('propBanner');
+      if (!el) return;
+      const STYLES = {
+        info: 'background:rgba(63,124,191,.08);border:1px solid rgba(63,124,191,.2);color:#3f7cbf',
+        ok: 'background:rgba(47,148,136,.08);border:1px solid rgba(47,148,136,.2);color:#2f9488',
+        err: 'background:rgba(214,90,60,.08);border:1px solid rgba(214,90,60,.2);color:#c04a30',
+      };
+      el.style.cssText = (el.style.cssText.split(';')[0] || '') +
+        `;margin-bottom:12px;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:600;display:flex;${STYLES[type] || STYLES.info}`;
+      el.textContent = msg;
+    }
+
+    /* ── Contract Tracker parser ───────────────────────────────── */
+    function parseContractTracker(bytes) {
+      const wb = XLSX.read(bytes, { type: 'array', cellDates: false });
+      const sheet = wb.Sheets['Contracts'] || wb.Sheets[wb.SheetNames[0]];
+      if (!sheet) throw new Error('Sheet "Contracts" not found in file.');
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
+      if (rows.length < 2) throw new Error('No data rows found in Contracts sheet.');
+
+      const parseNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; };
+
+      return rows.slice(1).map(row => {
+        // Skip blank rows
+        if (!row[0] && !row[1]) return null;
+
+        const location = String(row[2] || '').trim();
+        const pinMatch = location.match(/\b(\d{6})\b/);
+        const pin = pinMatch ? pinMatch[1] : '';
+
+        // Building = first 2 meaningful comma-separated parts of location
+        const locParts = location.split(',').map(s => s.trim()).filter(Boolean);
+        const building = locParts.slice(0, Math.min(2, locParts.length - 1)).join(', ') ||
+          location.replace(/,?\s*\d{6}\s*$/, '').trim().substring(0, 60);
+
+        const rents = [row[7], row[8], row[9], row[10], row[11]]
+          .map(v => parseNum(v))
+          .filter(v => v > 0);
+
+        return {
+          file: String(row[0] || '').trim(),
+          tenant: String(row[1] || '').trim(),
+          location: location,
+          building: building || location.substring(0, 60),
+          pin: pin,
+          from: String(row[3] || '').trim(),
+          to: String(row[4] || '').trim(),
+          deposit: parseNum(row[5]),
+          rents: rents,
+        };
+      }).filter(Boolean);
+    }
+
+    /* ── Save PROPERTIES to Supabase ───────────────────────────── */
+    async function savePropertiesToDb() {
+      const sb = getSupabase();
+      // Clear existing rows for a clean sync
+      const { error: delErr } = await sb.from('properties').delete().neq('id', 0);
+      if (delErr) throw new Error(delErr.message);
+
+      // Batch insert (Supabase handles up to 1000 rows per insert)
+      const rows = PROPERTIES.map(p => ({
+        file_name: p.file || null,
+        tenant_name: p.tenant || null,
+        location: p.location || null,
+        building: p.building || null,
+        pincode: p.pin || null,
+        period_from: p.from || null,
+        period_to: p.to || null,
+        deposit: p.deposit || 0,
+        rent_yr1: (p.rents && p.rents[0]) || null,
+        rent_yr2: (p.rents && p.rents[1]) || null,
+        rent_yr3: (p.rents && p.rents[2]) || null,
+        rent_yr4: (p.rents && p.rents[3]) || null,
+        rent_yr5: (p.rents && p.rents[4]) || null,
+      }));
+
+      // Insert in chunks of 500 to stay well within limits
+      const CHUNK = 500;
+      for (let i = 0; i < rows.length; i += CHUNK) {
+        const { error } = await sb.from('properties').insert(rows.slice(i, i + CHUNK));
+        if (error) throw new Error(error.message);
+      }
+    }
+
+    /* ── Load PROPERTIES from Supabase ────────────────────────── */
+    let propDbLoaded = false;
+    async function loadPropertiesFromDb() {
+      if (propDbLoaded) return;          // only auto-load once per session
+      try {
+        const sb = getSupabase();
+        const { data, error } = await sb
+          .from('properties')
+          .select('*')
+          .order('id', { ascending: true });
+        if (error || !data || data.length === 0) return;
+
+        PROPERTIES.length = 0;
+        data.forEach(r => {
+          const rents = [r.rent_yr1, r.rent_yr2, r.rent_yr3, r.rent_yr4, r.rent_yr5]
+            .map(v => parseFloat(v) || 0)
+            .filter(v => v > 0);
+          PROPERTIES.push({
+            file: r.file_name || '',
+            tenant: r.tenant_name || '',
+            location: r.location || '',
+            building: r.building || '',
+            pin: r.pincode || '',
+            from: r.period_from || '',
+            to: r.period_to || '',
+            deposit: parseFloat(r.deposit) || 0,
+            rents: rents,
+          });
+        });
+        propDbLoaded = true;
+
+        // Show DB banner with record count and date
+        const lastUp = data[data.length - 1].created_at
+          ? new Date(data[data.length - 1].created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+          : '—';
+        propShowBanner('ok', `☁️ ${data.length} properties loaded from cloud database · last updated ${lastUp}`);
+      } catch (_e) { /* Supabase unavailable — silently skip */ }
+    }
 
 
     /* ──────────────────────────────────────────────────────────
        MANAGE DATA — cloud status, load & delete per period
        ────────────────────────────────────────────────────────── */
     async function renderManage() {
-      const ALL_MONTHS = ['Apr-26','May-26','Jun-26','Jul-26','Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27','Mar-27'];
-      const QUARTERS   = [
-        { key:'2026-Q1', label:'Q1 (Apr–Jun 26)', endLabel:'Jun-26' },
-        { key:'2026-Q2', label:'Q2 (Jul–Sep 26)', endLabel:'Sep-26' },
-        { key:'2026-Q3', label:'Q3 (Oct–Dec 26)', endLabel:'Dec-26' },
-        { key:'2026-Q4', label:'Q4 (Jan–Mar 27)', endLabel:'Mar-27' },
+      const ALL_MONTHS = ['Apr-26', 'May-26', 'Jun-26', 'Jul-26', 'Aug-26', 'Sep-26', 'Oct-26', 'Nov-26', 'Dec-26', 'Jan-27', 'Feb-27', 'Mar-27'];
+      const QUARTERS = [
+        { key: '2026-Q1', label: 'Q1 (Apr–Jun 26)', endLabel: 'Jun-26' },
+        { key: '2026-Q2', label: 'Q2 (Jul–Sep 26)', endLabel: 'Sep-26' },
+        { key: '2026-Q3', label: 'Q3 (Oct–Dec 26)', endLabel: 'Dec-26' },
+        { key: '2026-Q4', label: 'Q4 (Jan–Mar 27)', endLabel: 'Mar-27' },
       ];
       const FY_KEY = '2026-FY';
 
@@ -2816,22 +3083,22 @@ async function loadPropertiesFromDb() {
 
       // Classify by key format
       const byKey = new Map(cloudRows.map(r => [r.month_year, r]));
-      const monthlyRecs   = cloudRows.filter(r => /^\d{4}-\d{2}$/.test(r.month_year));
+      const monthlyRecs = cloudRows.filter(r => /^\d{4}-\d{2}$/.test(r.month_year));
       const quarterlyRecs = cloudRows.filter(r => /^\d{4}-Q[1-4]$/.test(r.month_year));
-      const yearlyRecs    = cloudRows.filter(r => /^\d{4}-FY$/.test(r.month_year));
+      const yearlyRecs = cloudRows.filter(r => /^\d{4}-FY$/.test(r.month_year));
 
       // KPIs
-      const lastUp = cloudRows.length ? new Date(cloudRows[cloudRows.length-1].uploaded_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const lastUp = cloudRows.length ? new Date(cloudRows[cloudRows.length - 1].uploaded_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
       document.getElementById('mgKpis').innerHTML = kpiHTML([
-        { l: 'Total Cloud Records', v: String(cloudRows.length),          n: 'across all period types' },
-        { l: 'Monthly TBs',         v: monthlyRecs.length + ' / 12',      n: 'individual months uploaded' },
-        { l: 'Quarterly TBs',       v: quarterlyRecs.length + ' / 4',     n: 'Q1–Q4 uploaded' },
-        { l: 'Yearly TB',           v: yearlyRecs.length ? '✅ Uploaded' : '⬜ Missing', n: yearlyRecs.length ? lastUp : 'not uploaded yet', cls: yearlyRecs.length ? 'pos' : '' },
+        { l: 'Total Cloud Records', v: String(cloudRows.length), n: 'across all period types' },
+        { l: 'Monthly TBs', v: monthlyRecs.length + ' / 12', n: 'individual months uploaded' },
+        { l: 'Quarterly TBs', v: quarterlyRecs.length + ' / 4', n: 'Q1–Q4 uploaded' },
+        { l: 'Yearly TB', v: yearlyRecs.length ? '✅ Uploaded' : '⬜ Missing', n: yearlyRecs.length ? lastUp : 'not uploaded yet', cls: yearlyRecs.length ? 'pos' : '' },
       ]);
 
       // Status chips
       const cloudChip = (inCloud, label) => {
-        if (inCloud) return `<span style="background:rgba(47,148,136,.14);color:var(--teal);padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700">☁️ ${label||'Uploaded'}</span>`;
+        if (inCloud) return `<span style="background:rgba(47,148,136,.14);color:var(--teal);padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700">☁️ ${label || 'Uploaded'}</span>`;
         return `<span style="background:rgba(107,124,147,.10);color:var(--muted);padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700">⬜ Missing</span>`;
       };
 
@@ -2839,9 +3106,9 @@ async function loadPropertiesFromDb() {
       document.getElementById('mgMonthly').innerHTML = ALL_MONTHS.map(m => {
         const key = dashboardMonthToMonthYear(m);
         const rec = key && byKey.get(key);
-        const bg     = rec ? 'linear-gradient(160deg,rgba(47,148,136,.07),transparent)' : 'rgba(107,124,147,.04)';
+        const bg = rec ? 'linear-gradient(160deg,rgba(47,148,136,.07),transparent)' : 'rgba(107,124,147,.04)';
         const border = rec ? 'rgba(47,148,136,.22)' : 'var(--line)';
-        const dt = rec ? new Date(rec.uploaded_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}) : null;
+        const dt = rec ? new Date(rec.uploaded_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : null;
         return `<div style="background:${bg};border:1px solid ${border};border-radius:10px;padding:9px 11px">
           <div style="font-weight:700;color:var(--navy);font-size:11.5px;margin-bottom:4px">${m}</div>
           ${cloudChip(!!rec, rec ? dt : null)}
@@ -2851,9 +3118,9 @@ async function loadPropertiesFromDb() {
       // ── Quarterly slots ─────────────────────────────────────────
       document.getElementById('mgQuarterly').innerHTML = QUARTERS.map(q => {
         const rec = byKey.get(q.key);
-        const bg     = rec ? 'linear-gradient(160deg,rgba(63,124,191,.07),transparent)' : 'rgba(107,124,147,.04)';
+        const bg = rec ? 'linear-gradient(160deg,rgba(63,124,191,.07),transparent)' : 'rgba(107,124,147,.04)';
         const border = rec ? 'rgba(63,124,191,.22)' : 'var(--line)';
-        const dt = rec ? new Date(rec.uploaded_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : null;
+        const dt = rec ? new Date(rec.uploaded_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : null;
         return `<div style="background:${bg};border:1px solid ${border};border-radius:10px;padding:11px 13px">
           <div style="font-weight:700;color:var(--navy);font-size:12px;margin-bottom:5px">${q.label}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
@@ -2865,12 +3132,12 @@ async function loadPropertiesFromDb() {
 
       // ── Yearly slot ─────────────────────────────────────────────
       const fyRec = byKey.get(FY_KEY);
-      const fyDt  = fyRec ? new Date(fyRec.uploaded_at).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : null;
-      document.getElementById('mgYearly').innerHTML = `<div style="background:${fyRec?'linear-gradient(160deg,rgba(184,144,47,.08),transparent)':'rgba(107,124,147,.04)'};border:1px solid ${fyRec?'rgba(184,144,47,.22)':'var(--line)'};border-radius:12px;padding:16px 16px">
+      const fyDt = fyRec ? new Date(fyRec.uploaded_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null;
+      document.getElementById('mgYearly').innerHTML = `<div style="background:${fyRec ? 'linear-gradient(160deg,rgba(184,144,47,.08),transparent)' : 'rgba(107,124,147,.04)'};border:1px solid ${fyRec ? 'rgba(184,144,47,.22)' : 'var(--line)'};border-radius:12px;padding:16px 16px">
         <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:6px">FY 2026-27 (Full Year)</div>
         ${fyRec
           ? `<div style="margin-bottom:8px"><span style="background:rgba(184,144,47,.13);color:var(--gold);padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700">☁️ Uploaded ${fyDt}</span></div>
-             <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${fyRec.tb_data&&fyRec.tb_data.ledgers?fyRec.tb_data.ledgers.length:''} ledgers &middot; key: <code>${FY_KEY}</code></div>
+             <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${fyRec.tb_data && fyRec.tb_data.ledgers ? fyRec.tb_data.ledgers.length : ''} ledgers &middot; key: <code>${FY_KEY}</code></div>
              <button onclick="mgDeleteRecord('${FY_KEY}')" style="padding:5px 12px;border-radius:8px;border:1px solid rgba(214,90,60,.25);background:rgba(214,90,60,.08);color:#c15a3f;font-size:11px;font-weight:600;cursor:pointer">🗑 Delete from cloud</button>`
           : `<div style="color:var(--muted);font-size:11.5px;margin-bottom:10px">Not uploaded yet.<br>Upload a 12-month TB (1-Apr-26 to 31-Mar-27) and save to DB.</div>
              <div style="font-size:11px;color:var(--muted)">Key that will be used: <code>${FY_KEY}</code></div>`
@@ -2879,17 +3146,17 @@ async function loadPropertiesFromDb() {
 
       // ── Cloud audit table ───────────────────────────────────────
       document.getElementById('mgEmpty').style.display = cloudRows.length ? 'none' : 'block';
-      document.getElementById('mgTbl').style.display   = cloudRows.length ? '' : 'none';
-      document.getElementById('mgTblCap').textContent  = cloudRows.length + ' record(s) · last refreshed ' + new Date().toLocaleTimeString('en-IN');
+      document.getElementById('mgTbl').style.display = cloudRows.length ? '' : 'none';
+      document.getElementById('mgTblCap').textContent = cloudRows.length + ' record(s) · last refreshed ' + new Date().toLocaleTimeString('en-IN');
 
       const typeLabel = key => {
-        if (/^\d{4}-\d{2}$/.test(key))   return `<span style="background:rgba(47,148,136,.10);color:var(--teal);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Monthly</span>`;
-        if (/^\d{4}-Q[1-4]$/.test(key))  return `<span style="background:rgba(63,124,191,.10);color:var(--sky);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Quarterly</span>`;
-        if (/^\d{4}-FY$/.test(key))       return `<span style="background:rgba(184,144,47,.12);color:var(--gold);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Yearly</span>`;
+        if (/^\d{4}-\d{2}$/.test(key)) return `<span style="background:rgba(47,148,136,.10);color:var(--teal);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Monthly</span>`;
+        if (/^\d{4}-Q[1-4]$/.test(key)) return `<span style="background:rgba(63,124,191,.10);color:var(--sky);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Quarterly</span>`;
+        if (/^\d{4}-FY$/.test(key)) return `<span style="background:rgba(184,144,47,.12);color:var(--gold);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">Yearly</span>`;
         return key;
       };
       document.querySelector('#mgTbl tbody').innerHTML = cloudRows.map(r => {
-        const dt = r.uploaded_at ? new Date(r.uploaded_at).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+        const dt = r.uploaded_at ? new Date(r.uploaded_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
         const ledgerCount = r.tb_data && r.tb_data.ledgers ? r.tb_data.ledgers.length : '?';
         return `<tr>
           <td style="font-weight:600;color:var(--navy)">${esc_html(r.display_label || r.month_year)}</td>
@@ -2906,7 +3173,7 @@ async function loadPropertiesFromDb() {
     }
 
     // Load a record (any period type) from cloud into the current DATA
-    window.mgLoadRecord = async function(key) {
+    window.mgLoadRecord = async function (key) {
       try {
         const sb = getSupabase();
         const { data, error } = await sb.from('monthly_uploads').select('tb_data,display_label').eq('month_year', key).single();
@@ -2926,7 +3193,7 @@ async function loadPropertiesFromDb() {
     };
 
     // Delete a cloud record
-    window.mgDeleteRecord = async function(monthYear) {
+    window.mgDeleteRecord = async function (monthYear) {
       const label = monthYearToLabel(monthYear) || monthYear;
       const ok = confirm(`Delete the cloud record for "${label}"?\n\nThis will permanently remove it from Supabase. Your current session data is not affected.`);
       if (!ok) return;
@@ -2979,8 +3246,37 @@ async function loadPropertiesFromDb() {
       document.getElementById('depDelete').onclick = () => deleteDepItFromDb();
     }
 
-    /* init */
-    periodOptions(); loadAllCloudData();
+    /* init password check */
+    const passInput = document.getElementById('pass-input');
+    const passSubmit = document.getElementById('pass-submit');
+    const passError = document.getElementById('pass-error');
+
+    function checkPassword() {
+      if (passInput && passInput.value === '0S1') {
+        const wrapEl = document.querySelector('.wrap');
+        const screenEl = document.getElementById('password-screen');
+        if (wrapEl) wrapEl.style.display = 'block';
+        if (screenEl) screenEl.style.display = 'none';
+        periodOptions();
+        loadAllCloudData();
+      } else {
+        if (passError) passError.style.display = 'block';
+        if (passInput) passInput.style.borderColor = '#c0492f';
+      }
+    }
+
+    if (passSubmit) {
+      passSubmit.onclick = checkPassword;
+    }
+    if (passInput) {
+      passInput.onkeydown = e => {
+        if (e.key === 'Enter') checkPassword();
+      };
+      passInput.oninput = () => {
+        if (passError) passError.style.display = 'none';
+        passInput.style.borderColor = 'rgba(31, 58, 95, 0.15)';
+      };
+    }
 
     // Wire Properties upload buttons immediately (before async DB load)
     document.getElementById('propUpload').onclick = () => {
