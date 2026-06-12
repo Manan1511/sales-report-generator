@@ -3269,15 +3269,9 @@ async function loadPropertiesFromDb() {
         const customerGSTN = String(row['Customer GSTN'] || row['customer_gstn'] || '').trim();
 
         let igst, cgst, sgst;
-        if (customerGSTN.startsWith('27')) {
-          cgst = gst / 2;
-          sgst = gst / 2;
-          igst = 0;
-        } else {
-          igst = gst;
-          cgst = 0;
-          sgst = 0;
-        }
+        cgst = gst / 2;
+        sgst = gst / 2;
+        igst = 0;
 
         const tcsAmt = parseNum(row['TCS Amount'] || row['tcs_amount'] || '');
         const tdsAmt = parseNum(row['TDS Amount'] || row['tds_amount'] || '');
