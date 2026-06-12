@@ -1,8 +1,27 @@
+# ── Node / build ────────────────────────────────────────────
 node_modules/
 dist/
 .vite/
 *.local
-~$*
-.agents/
+
+# ── Sensitive financial data ─────────────────────────────────
 *.xlsx
+*.xlsm
+*.xls
 *.csv
+
+# ── Scratch / one-off scripts ────────────────────────────────
+scratch_*.py
+scratch_*.js
+
+# ── Work-in-progress / reference HTML files ─────────────────
+Financial_Analysis_Dashboard*.html
+recovered_ref_file.html
+
+# ── Agent & AI workspace ────────────────────────────────────
+.agents/
+
+# ── OS noise ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+~$*
