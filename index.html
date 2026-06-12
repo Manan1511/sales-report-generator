@@ -1446,19 +1446,22 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     const MON_MAP = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
 
     function extractPeriodFromHeader(str) {
-      // Expect e.g. "1-Apr-2026 to 30-Jun-2026" or "01-April-2026 to 31-March-2027"
-      const rx = /(\d{1,2})-([A-Za-z]+)-(\d{4})\s+to\s+(\d{1,2})-([A-Za-z]+)-(\d{4})/i;
+      // Accept both 2-digit years ("1-Apr-26") and 4-digit years ("1-Apr-2026")
+      // Standard Tally export uses 2-digit years.
+      const rx = /(\d{1,2})-([A-Za-z]+)-(\d{2,4})\s+to\s+(\d{1,2})-([A-Za-z]+)-(\d{2,4})/i;
       const m = str.match(rx);
       if (!m) return null;
       const [,, sm, sy,, em, ey] = m;
       const smKey = sm.slice(0,3).toLowerCase(), emKey = em.slice(0,3).toLowerCase();
       if (!MON_MAP[smKey] || !MON_MAP[emKey]) return null;
 
-      const startYr = parseInt(sy), endYr = parseInt(ey);
+      // Normalise 2-digit years → 4-digit (26 → 2026, 27 → 2027)
+      const norm = yr => { const n = parseInt(yr); return n < 100 ? 2000 + n : n; };
+      const startYr = norm(sy), endYr = norm(ey);
       const startMo = parseInt(MON_MAP[smKey]), endMo = parseInt(MON_MAP[emKey]);
       const span = (endYr - startYr) * 12 + (endMo - startMo) + 1; // months in range
 
-      // End-month dashboard label e.g. 'Jun-26'
+      // End-month dashboard label e.g. 'Apr-26' (always 2-digit year suffix)
       const endLabel = `${em.charAt(0).toUpperCase()+em.slice(1,3).toLowerCase()}-${String(endYr).slice(-2)}`;
 
       if (span <= 1) {
@@ -1544,14 +1547,17 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
 
       // Detect period from the "dd-Mon-YYYY to dd-Mon-YYYY" header row
+      // Join all cells in the row to handle Tally exports that spread the date across columns
       let period = null;
       for (const row of rows) {
-        if (row && row[0] && String(row[0]).includes('to')) {
-          period = extractPeriodFromHeader(String(row[0]));
+        if (!Array.isArray(row) || row.length === 0) continue;
+        const fullRow = row.map(c => String(c || '')).join(' ').trim();
+        if (fullRow.includes('to')) {
+          period = extractPeriodFromHeader(fullRow);
           if (period) break;
         }
       }
-      if (!period) throw new Error('Could not detect date range from Trial Balance header');
+      if (!period) throw new Error('Could not detect date range from Trial Balance header. Ensure the file is exported from Tally with a date range (e.g. 1-Apr-2026 to 30-Apr-2026).');
 
       // The data always lives in the END-MONTH slot (quarter/year closing balance)
       const endLabel = period.endLabel;
@@ -2194,8 +2200,10 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
   const ca = bsAtMonth(l => l.cat === 'Current Assets', lastM);
   const cl = bsAtMonth(l => l.cat === 'Current Liabilities', lastM); // already positive (sign=-1 * Cr-val)
   const cash=cashAt(lastM);
-  const eq=-bsAtMonth(l=>l.cat==='Equity',lastM)+cumPBT(lastM);
-  const assets=bsAtMonth(l=>l.cat==='Fixed Assets',lastM)+ca;
+  // Net worth: equity ledgers with sign:-1 already return positive values from bsAtMonth;
+  // do NOT negate — just add cumulative retained profit.
+  const eq = bsAtMonth(l => l.cat === 'Equity', lastM) + cumPBT(lastM);
+  const assets = bsAtMonth(l => l.cat === 'Fixed Assets', lastM) + ca;
   document.getElementById('ovKpis').innerHTML=kpiHTML([
     {l:'Total Revenue',v:fmtCr(rev),n:periodLabel()},
     {l:'Net Profit',v:fmtCr(np),n:'margin '+pct(np,rev),cls:np>=0?'pos':'neg'},
@@ -2227,7 +2235,10 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     ['Cash & Bank',fmt(cash),''],['Working Capital',fmt(ca-cl),'CR '+(cl?(ca/cl).toFixed(2):'-')+'x'],
   ];
   document.querySelector('#ovSnap tbody').innerHTML=snap.map(([l,v,p])=>`<tr><td>${l}</td><td>${v}</td><td>${p}</td></tr>`).join('');
-  const cr=cl?ca/cl:0, de=eq?(-bsAtMonth(l=>l.cat==='Non-Current Liabilities',lastM)+cl)/eq:0, nm=np/rev*100;
+  const cr = cl ? ca / cl : 0;
+  const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
+  const de = eq ? (ncl + cl) / eq : 0;
+  const nm = np / rev * 100;
   const health=[
     ['Profitability', np>0?'✓ Profitable':'✗ Loss', pct(np,rev)+' margin'],
     ['Liquidity', cr>=1.5?'✓ Strong':cr>=1?'~ Adequate':'✗ Tight', cr.toFixed(2)+'x current'],
@@ -2245,9 +2256,11 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
   const lastM=periodLastMonth();
   const fa=bsAtMonth(l=>l.cat==='Fixed Assets',lastM), ca=bsAtMonth(l=>l.cat==='Current Assets',lastM);
   const assets=fa+ca;
-  const cl=-bsAtMonth(l=>l.cat==='Current Liabilities',lastM);
-  const ncl=-bsAtMonth(l=>l.cat==='Non-Current Liabilities',lastM);
-  const eq=-bsAtMonth(l=>l.cat==='Equity',lastM)+cumPBT(lastM);
+  // Liability and equity bsAtMonth already applies sign:-1 for credit-balance accounts → returns positive.
+  // Do NOT add an extra `-` negation.
+  const cl  = bsAtMonth(l => l.cat === 'Current Liabilities',     lastM);
+  const ncl = bsAtMonth(l => l.cat === 'Non-Current Liabilities', lastM);
+  const eq  = bsAtMonth(l => l.cat === 'Equity',                   lastM) + cumPBT(lastM);
   const inv=0; const cash=cashAt(lastM);
   const rec=bsAtMonth(l=>l.sub==='Trade Receivables',lastM);
   const pay=-bsAtMonth(l=>l.sub==='Trade Payables',lastM);
@@ -2275,8 +2288,17 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
       scales:{x:{grid:{display:false}},y:{grid:{color:GRID},ticks:{callback:v=>v+'%'}}}}});
   // liquidity/leverage trend across months
   destroyChart('ratLiq');
-  const crSeries=DATA.months.map((_,m)=>{const a=bsAtMonth(l=>l.cat==='Current Assets',m),c=-bsAtMonth(l=>l.cat==='Current Liabilities',m);return c?+(a/c).toFixed(2):0;});
-  const deSeries=DATA.months.map((_,m)=>{const e=-bsAtMonth(l=>l.cat==='Equity',m)+cumPBT(m),d=-bsAtMonth(l=>l.cat==='Non-Current Liabilities',m)-bsAtMonth(l=>l.cat==='Current Liabilities',m);return e?+(d/e).toFixed(2):0;});
+  const crSeries = DATA.months.map((_, m) => {
+    const a = bsAtMonth(l => l.cat === 'Current Assets', m);
+    const c = bsAtMonth(l => l.cat === 'Current Liabilities', m);
+    return c ? +(a / c).toFixed(2) : 0;
+  });
+  const deSeries = DATA.months.map((_, m) => {
+    const e = bsAtMonth(l => l.cat === 'Equity', m) + cumPBT(m);
+    const d = bsAtMonth(l => l.cat === 'Non-Current Liabilities', m)
+             + bsAtMonth(l => l.cat === 'Current Liabilities', m);
+    return e ? +(d / e).toFixed(2) : 0;
+  });
   charts.ratLiq=new Chart(document.getElementById('ratLiq'),{type:'line',
     data:{labels:DATA.months,datasets:[
       {label:'Current Ratio',data:crSeries,borderColor:'#2f9488',backgroundColor:'#2f948833',tension:.35,borderWidth:2,pointRadius:0,fill:false},
@@ -2305,13 +2327,23 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     function renderTrends(){
   const revS=monthlySeries('revenue'), expS=monthlySeries('expense'), npS=netProfitSeries();
   const fyRev=revS.reduce((a,b)=>a+b,0), fyNp=npS.reduce((a,b)=>a+b,0);
-  // growth: last month vs first
-  const g=revS[0]?((revS[revS.length-1]-revS[0])/revS[0]*100):0;
+
+  // Revenue Growth: compare first → last month that actually has data (revenue > 0)
+  // Avoids showing -100% when months without a TB uploaded have ₹0 revenue.
+  const activeIdxs = revS.map((v,i) => v > 0 ? i : -1).filter(i => i >= 0);
+  const hasGrowth  = activeIdxs.length >= 2;
+  const g = hasGrowth
+    ? ((revS[activeIdxs[activeIdxs.length-1]] - revS[activeIdxs[0]]) / revS[activeIdxs[0]] * 100)
+    : null;
+  const gLabel = hasGrowth
+    ? DATA.months[activeIdxs[0]] + ' → ' + DATA.months[activeIdxs[activeIdxs.length-1]]
+    : 'only 1 month loaded';
+
   const bestM=npS.indexOf(Math.max(...npS));
   document.getElementById('trKpis').innerHTML=kpiHTML([
     {l:'FY Revenue',v:fmtCr(fyRev),n:'all months'},
     {l:'FY Net Profit',v:fmtCr(fyNp),n:'margin '+pct(fyNp,fyRev)},
-    {l:'Revenue Growth',v:(g>=0?'+':'')+g.toFixed(1)+'%',n:'Apr → Mar',cls:g>=0?'pos':'neg'},
+    {l:'Revenue Growth',v:g!==null?(g>=0?'+':'')+g.toFixed(1)+'%':'—',n:gLabel,cls:g!==null&&g>=0?'pos':g!==null?'neg':''},
     {l:'Best Month',v:DATA.months[bestM],n:'profit '+fmt(npS[bestM])},
   ]);
   document.getElementById('trTblCap').textContent='Month-on-month, full year';
@@ -2342,11 +2374,15 @@ let DATA = normalize(DUMMY), charts = {}, curView = 'overview';
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
       tooltip:{callbacks:{label:x=>{const s=steps[x.dataIndex];return s[0]+': ₹'+(Math.abs(s[2]-s[1])/1e5).toFixed(1)+'L';}}}},
       scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:GRID},ticks:{callback:v=>'₹'+v+'L'},title:{display:true,text:'₹ Lakh',font:{size:10}}}}}});
-  document.querySelector('#trTbl tbody').innerHTML=DATA.months.map((mn,i)=>{
-    const growth=i>0&&revS[i-1]?((revS[i]-revS[i-1])/revS[i-1]*100):null;
-    const gtxt=growth===null?'-':(growth>=0?'+':'')+growth.toFixed(1)+'%';
-    const gcls=growth===null?'':growth>=0?'pos':'neg';
-    return `<tr><td>${mn}</td><td>${fmt(revS[i])}</td><td>${fmt(expS[i])}</td><td class="${npS[i]<0?'neg':''}">${fmt(npS[i])}</td><td>${pct(npS[i],revS[i])}</td><td class="${gcls}">${gtxt}</td></tr>`;
+  document.querySelector('#trTbl tbody').innerHTML = DATA.months.map((mn, i) => {
+    // Show growth only when BOTH this month and the prior month have real data (non-zero revenue).
+    // April (i=0) is the FY start — always show '-'. Months with no TB uploaded (rev=0) show '-'.
+    const growth = (i > 0 && revS[i - 1] > 0 && revS[i] > 0)
+      ? ((revS[i] - revS[i - 1]) / revS[i - 1] * 100)
+      : null;
+    const gtxt = growth === null ? '-' : (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
+    const gcls = growth === null ? '' : growth >= 0 ? 'pos' : 'neg';
+    return `<tr><td>${mn}</td><td>${fmt(revS[i])}</td><td>${fmt(expS[i])}</td><td class="${npS[i] < 0 ? 'neg' : ''}">${fmt(npS[i])}</td><td>${pct(npS[i], revS[i])}</td><td class="${gcls}">${gtxt}</td></tr>`;
   }).join('');
 }
     function renderProperties(){
