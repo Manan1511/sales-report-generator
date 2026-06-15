@@ -930,6 +930,7 @@
         <button class="btn btn-gold" id="save-tb-db" style="display:none">💾 Save to DB</button>
         <input type="file" id="file" accept=".xlsx,.xlsm, .xls" style="display:none">
         <span class="status" id="status">⚠️ No data loaded — upload a TB file to begin</span>
+        <button id="logout-btn" title="Log out" style="margin-left:8px;padding:7px 14px;border-radius:8px;border:1px solid rgba(31,58,95,0.18);background:#fff;color:#1f3a5f;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background 0.2s,color 0.2s" onmouseover="this.style.background='#1f3a5f';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#1f3a5f'">⏻ Log Out</button>
       </div>
     </header>
 
@@ -3828,6 +3829,28 @@
       }
     }
 
+    function logout() {
+      // Reset session state
+      userRole = null;
+
+      // Clear login inputs for security
+      const userInput = document.getElementById('user-input');
+      const passInput = document.getElementById('pass-input');
+      const passError = document.getElementById('pass-error');
+      if (userInput) { userInput.value = ''; userInput.style.borderColor = ''; }
+      if (passInput) { passInput.value = ''; passInput.style.borderColor = ''; }
+      if (passError) passError.style.display = 'none';
+
+      // Hide dashboard, show login screen
+      const wrapEl = document.querySelector('.wrap');
+      const screenEl = document.getElementById('password-screen');
+      if (wrapEl) wrapEl.style.display = 'none';
+      if (screenEl) screenEl.style.display = 'flex';
+
+      // Focus username field
+      if (userInput) setTimeout(() => userInput.focus(), 100);
+    }
+
     function applyRolePermissions() {
       const tabs = document.querySelectorAll('.tabs .tab');
       tabs.forEach(t => {
@@ -3879,6 +3902,10 @@
 
     if (passSubmit) {
       passSubmit.onclick = checkPassword;
+    }
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.onclick = logout;
     }
     if (passInput) {
       passInput.onkeydown = e => {
