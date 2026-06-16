@@ -37,7 +37,6 @@ npm run preview
 ---
 
 ## ✨ Features & Dashboard Tabs
-
 The dashboard is structured into 11 specialized views accessible via the top navigation bar:
 
 | Tab | Purpose & Features |
